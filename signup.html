@@ -162,6 +162,25 @@
       text-decoration: none;
       font-weight: 700;
     }
+    .password-wrap {
+      position: relative;
+    }
+    .password-wrap input {
+      padding-right: 56px;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
   </style>
 </head>
 <body>
@@ -189,7 +208,18 @@
 
       <div class="field">
         <label for="password">Password</label>
-        <input id="password" type="password" placeholder="Choose a password" />
+        <div class="password-wrap">
+          <input id="password" type="password" placeholder="Choose a password" />
+          <button type="button" class="password-toggle" data-target="password">Show</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="confirm-password">Confirm password</label>
+        <div class="password-wrap">
+          <input id="confirm-password" type="password" placeholder="Confirm your password" />
+          <button type="button" class="password-toggle" data-target="confirm-password">Show</button>
+        </div>
       </div>
 
       <button id="signup-btn" class="cta" type="button">Create account</button>
@@ -200,10 +230,22 @@
   </div>
 
   <script>
+    document.querySelectorAll('.password-toggle').forEach((button) => {
+      button.addEventListener('click', () => {
+        const input = document.getElementById(button.dataset.target);
+        if (!input) return;
+
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        button.textContent = isPassword ? 'Hide' : 'Show';
+      });
+    });
+
     document.getElementById('signup-btn').addEventListener('click', () => {
       const name = document.getElementById('name').value.trim();
       const phone = document.getElementById('phone').value.trim().replace(/\D/g, '');
       const password = document.getElementById('password').value.trim();
+      const confirmPassword = document.getElementById('confirm-password').value.trim();
 
       if (!name) {
         alert('Enter your full name.');
@@ -213,8 +255,12 @@
         alert('Enter a valid phone number.');
         return;
       }
-      if (!password || password.length < 4) {
-        alert('Password must be at least 4 characters long.');
+      if (!password || password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        alert('Passwords do not match. Please confirm your password again.');
         return;
       }
 
@@ -227,6 +273,8 @@
       users.push({ name, phone, password });
       localStorage.setItem('mpambaUsers', JSON.stringify(users));
       localStorage.setItem('mpambaSession', JSON.stringify({ phone, name }));
+      localStorage.setItem('tnmBalance', '0');
+      localStorage.setItem('tnmBalanceHidden', '0');
       window.location.href = 'index.html';
     });
 

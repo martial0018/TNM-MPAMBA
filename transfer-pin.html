@@ -185,14 +185,14 @@
 
     <div class="content">
       <p class="eyebrow">Transfer</p>
-      <h1>Enter your PIN</h1>
+      <h1>Enter your TNM Mpamba PIN</h1>
 
       <div class="summary">
         <strong id="transfer-network">TNM</strong>
         <span id="transfer-summary">Send MWK 0 to 0888123456</span>
       </div>
 
-      <div class="pin-label">Enter your 4-digit PIN</div>
+      <div class="pin-label">Enter your 4-digit TNM Mpamba PIN</div>
       <div class="pin-row">
         <input maxlength="1" inputmode="numeric" type="password" />
         <input maxlength="1" inputmode="numeric" type="password" />
@@ -241,7 +241,7 @@
         return;
       }
 
-      const balance = Number(localStorage.getItem('tnmBalance') || 50000);
+      const balance = Number(localStorage.getItem('tnmBalance') ?? 0);
       if (balance < amount) {
         alert('Insufficient balance');
         return;

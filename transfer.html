@@ -201,7 +201,7 @@
 
   <script>
     const money = n => 'MWK ' + Number(n).toLocaleString('en-US');
-    const parseBalance = () => Number(localStorage.getItem('tnmBalance') || 50000);
+    const parseBalance = () => Number(localStorage.getItem('tnmBalance') ?? 0);
 
     document.getElementById('continue').addEventListener('click', () => {
       const network = document.getElementById('network').value;

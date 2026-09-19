@@ -56,6 +56,7 @@
       display: grid;
       place-items: center;
       padding: 18px;
+      overflow-x: hidden;
       transition: background 0.25s ease, color 0.25s ease;
     }
 
@@ -69,6 +70,8 @@
 
     .page {
       width: min(100%, 430px);
+      max-width: 430px;
+      margin: 0 auto;
     }
 
     .card {
@@ -592,11 +595,18 @@
       box-shadow: 0 0 0 4px rgba(0,166,81,.08);
     }
 
+    .pin-shell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
     .pin-row {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-top: 8px;
+      flex: 1;
     }
 
     .pin-row input {
@@ -609,6 +619,33 @@
       background: #f9fbfa;
       color: var(--ink);
       box-shadow: inset 0 1px rgba(0,0,0,0.02);
+    }
+
+    .pin-peek {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(0,166,81,.18);
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(0,166,81,.12), rgba(0,166,81,.05));
+      color: var(--green-deep);
+      font-size: 18px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 1px rgba(255,255,255,.6), 0 8px 18px rgba(0,166,81,.08);
+    }
+
+    .pin-peek:hover,
+    .pin-peek:active,
+    .pin-peek.is-visible {
+      background: linear-gradient(180deg, rgba(0,166,81,.16), rgba(0,166,81,.08));
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: inset 0 1px rgba(255,255,255,.7), 0 10px 20px rgba(0,166,81,.12);
+    }
+
+    .pin-peek.is-visible {
+      border-color: rgba(0,166,81,.38);
     }
 
     .cta, .ghost {
@@ -701,6 +738,13 @@
       color: var(--ink);
     }
 
+    :root.dark .otp-box input {
+      background: rgba(17, 34, 26, 0.9);
+      border-color: rgba(148, 188, 166, 0.18);
+      color: var(--ink);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
     .success {
       display: none;
       text-align: center;
@@ -736,13 +780,62 @@
     }
 
     @media (max-width: 420px) {
-      body { padding: 12px; }
-      .page { width: min(100%, 100%); }
-      .topbar { padding: 14px 16px; }
-      .content { padding: 16px; }
-      .trust-row { grid-template-columns: 1fr; }
+      body {
+        padding: 10px;
+        overflow: hidden;
+      }
+      .page {
+        width: 100%;
+        max-width: 100%;
+        height: calc(100vh - 20px);
+      }
+      .card {
+        border-radius: 22px;
+        max-height: calc(100vh - 20px);
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .topbar { padding: 12px 14px; }
+      .content { padding: 12px; }
+      .security-identity {
+        margin-bottom: 10px;
+        padding: 8px 10px;
+        font-size: 11px;
+      }
+      .verification-strip {
+        margin: 8px 0 10px;
+        padding: 8px 10px;
+      }
+      .invoice { padding: 12px; }
+      .checkout-thumb { margin: 8px 0 12px; }
+      h1 {
+        margin: 8px 0 6px;
+        font-size: 24px;
+      }
+      .amount-box {
+        margin-top: 12px;
+        padding: 12px 13px;
+      }
+      .amount-box strong { font-size: 18px; }
+      .line-items {
+        margin-top: 12px;
+        padding-top: 10px;
+      }
+      .line-items > div { font-size: 11px; }
+      .field {
+        margin-top: 12px;
+      }
+      .trust-row {
+        gap: 6px;
+        margin: 8px 0 12px;
+      }
+      .trust-chip { padding: 7px 9px 7px 24px; font-size: 8px; }
       .pin-row { gap: 7px; }
-      .pin-row input { width: 42px; }
+      .pin-row input { width: 38px; height: 46px; }
+      .cta, .ghost { padding: 13px 14px; }
+      .phone-wrap { padding: 0 10px 0 8px; }
+      .country-prefix { padding: 7px 8px; font-size: 12px; }
+      .field input { font-size: 14px; }
     }
   </style>
 </head>
@@ -789,7 +882,7 @@
             <label>Amount to add</label>
             <div class="phone-wrap">
               <span class="country-prefix" aria-label="Malawi amount">MWK</span>
-              <input id="topup-amount" type="number" min="100" step="100" value="10000" inputmode="numeric" aria-label="Amount to add" />
+              <input id="topup-amount" type="number" min="100" step="100" value="500" inputmode="numeric" aria-label="Amount to add" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
             </div>
           </div>
 
@@ -797,17 +890,20 @@
             <label>Mpamba phone number</label>
             <div class="phone-wrap">
               <span class="country-prefix" aria-label="Malawi country code">🇲🇼 +265</span>
-              <input id="recipient-number" type="tel" value="" inputmode="tel" aria-label="Mpamba phone number" placeholder="8********" />
+              <input id="recipient-number" type="tel" value="" inputmode="tel" aria-label="Mpamba phone number" placeholder="8********" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
             </div>
           </div>
 
           <div class="field">
-            <label>Enter your PIN</label>
-            <div class="pin-row">
-              <input maxlength="1" inputmode="numeric" type="password" />
-              <input maxlength="1" inputmode="numeric" type="password" />
-              <input maxlength="1" inputmode="numeric" type="password" />
-              <input maxlength="1" inputmode="numeric" type="password" />
+            <label>Enter your TNM Mpamba PIN</label>
+            <div class="pin-shell">
+              <div class="pin-row">
+                <input maxlength="1" inputmode="numeric" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" />
+                <input maxlength="1" inputmode="numeric" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" />
+                <input maxlength="1" inputmode="numeric" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" />
+                <input maxlength="1" inputmode="numeric" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" />
+              </div>
+              <button id="pin-peek" class="pin-peek" type="button" aria-label="Show PIN">👁</button>
             </div>
           </div>
 
@@ -825,12 +921,12 @@
           <h2>Enter OTP</h2>
           <p style="color: var(--muted); margin: 8px 0 18px;">A 6-digit code was sent to your registered Mpamba number.</p>
           <div class="otp-box">
-            <input maxlength="1" inputmode="numeric" />
-            <input maxlength="1" inputmode="numeric" />
-            <input maxlength="1" inputmode="numeric" />
-            <input maxlength="1" inputmode="numeric" />
-            <input maxlength="1" inputmode="numeric" />
-            <input maxlength="1" inputmode="numeric" />
+            <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
+            <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
+            <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
+            <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
+            <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
+            <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
           </div>
           <button id="verify-otp" class="cta" type="button">Verify OTP</button>
           <button id="otp-back" class="ghost" type="button">Back</button>
@@ -903,6 +999,7 @@
       if (!recipientInput.value) {
         recipientInput.value = '';
       }
+      ensureFieldVisible(recipientInput);
     });
     recipientInput.addEventListener('blur', () => {
       const actual = normalizePhone(recipientInput.value || recipientInput.dataset.actualValue || '');
@@ -920,13 +1017,14 @@
     const topUpAmountInput = document.getElementById('topup-amount');
     if (isTopUp) {
       topUpField.style.display = 'block';
-      topUpAmountInput.value = price || 10000;
+      topUpAmountInput.value = price || 500;
       document.getElementById('bundle-price').textContent = money(Number(topUpAmountInput.value) || 0);
     } else {
       document.getElementById('bundle-price').textContent = money(price);
     }
 
     const pinInputs = [...document.querySelectorAll('.pin-row input')];
+    const pinPeekButton = document.getElementById('pin-peek');
     const paymentForm = document.getElementById('payment-form');
     const otpScreen = document.getElementById('otp-screen');
     const success = document.getElementById('success');
@@ -934,6 +1032,40 @@
     const authStatus = document.getElementById('auth-status');
     const authorizeButton = document.getElementById('authorize-button');
     const otpInputs = [...document.querySelectorAll('.otp-box input')];
+
+    const ensureFieldVisible = (element) => {
+      if (!element || typeof element.getBoundingClientRect !== 'function') return;
+
+      const viewportHeight = window.visualViewport ? window.visualViewport.height : (window.innerHeight || document.documentElement.clientHeight);
+      const rect = element.getBoundingClientRect();
+      const shouldScroll = rect.bottom > viewportHeight - 120 || rect.top < 90;
+      if (!shouldScroll) return;
+
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const targetY = Math.max(0, scrollY + rect.top - (viewportHeight * 0.28));
+
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => {
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+      }, 120);
+    };
+
+    const handleKeyboardAwareFocus = (event) => {
+      const target = event.target;
+      if (target && target.matches && target.matches('input, textarea')) {
+        ensureFieldVisible(target);
+      }
+    };
+
+    document.addEventListener('focusin', handleKeyboardAwareFocus);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        const activeField = document.activeElement;
+        if (activeField && activeField.matches && activeField.matches('input, textarea')) {
+          ensureFieldVisible(activeField);
+        }
+      });
+    }
 
     function collectPin() {
       return pinInputs.map(input => input.value).join('');
@@ -952,12 +1084,13 @@
     const getCurrentAmount = () => {
       if (isTopUp && topUpAmountInput) {
         const value = Number(topUpAmountInput.value);
-        return Number.isFinite(value) && value > 0 ? value : Number(price || 10000);
+        return Number.isFinite(value) && value > 0 ? value : Number(price || 500);
       }
       return Number(price || 0);
     };
 
     if (topUpAmountInput) {
+      topUpAmountInput.addEventListener('focus', () => ensureFieldVisible(topUpAmountInput));
       topUpAmountInput.addEventListener('input', () => {
         const amount = getCurrentAmount();
         document.getElementById('bundle-price').textContent = money(amount);
@@ -1008,7 +1141,7 @@
       const amount = getCurrentAmount();
       const recipientValue = recipientInput.dataset.actualValue || recipientInput.value || '';
       if (isTopUp) {
-        const storedBalance = Number(localStorage.getItem('tnmBalance') || 50000);
+        const storedBalance = Number(localStorage.getItem('tnmBalance') ?? 0);
         localStorage.setItem('tnmBalance', String(storedBalance + amount));
       }
 
@@ -1030,35 +1163,201 @@
       window.location.href = 'index.html';
     });
 
-    pinInputs.forEach((input, index) => {
+    const disablePaste = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    recipientInput.addEventListener('paste', disablePaste);
+    recipientInput.addEventListener('drop', disablePaste);
+
+    pinInputs.forEach((input) => {
+      input.addEventListener('paste', disablePaste);
+      input.addEventListener('drop', disablePaste);
       input.addEventListener('input', () => {
         input.value = input.value.replace(/\D/g, '').slice(0, 1);
-        if (input.value && index < pinInputs.length - 1) {
-          pinInputs[index + 1].focus();
-        }
-      });
-
-      input.addEventListener('keydown', (event) => {
-        if (event.key === 'Backspace' && !input.value && index > 0) {
-          pinInputs[index - 1].focus();
-        }
       });
     });
 
     otpInputs.forEach((input, index) => {
+      input.addEventListener('focus', () => ensureFieldVisible(input));
+      input.addEventListener('paste', (event) => {
+        const pasted = (event.clipboardData || window.clipboardData)?.getData('text') || '';
+        const digits = pasted.replace(/\D/g, '').slice(0, otpInputs.length);
+        if (!digits) {
+          event.preventDefault();
+          return;
+        }
+
+        event.preventDefault();
+        digits.split('').forEach((digit, digitIndex) => {
+          const targetIndex = index + digitIndex;
+          if (otpInputs[targetIndex]) {
+            otpInputs[targetIndex].value = digit;
+          }
+        });
+
+        const nextIndex = Math.min(index + digits.length, otpInputs.length - 1);
+        otpInputs[nextIndex].focus();
+      });
+      input.addEventListener('drop', disablePaste);
       input.addEventListener('input', () => {
         input.value = input.value.replace(/\D/g, '').slice(0, 1);
-        if (input.value && index < otpInputs.length - 1) {
-          otpInputs[index + 1].focus();
+      });
+    });
+
+    const isDeleteKeyEvent = (event) => {
+      const key = event.key || '';
+      const code = event.code || '';
+      return key === 'Backspace' || key === 'Delete' || code === 'Backspace' || event.keyCode === 8 || event.keyCode === 46;
+    };
+
+    const focusDigit = (group, index) => {
+      const target = group[index];
+      if (!target) return;
+      requestAnimationFrame(() => {
+        target.focus();
+        if (typeof target.setSelectionRange === 'function') {
+          const pos = target.value.length;
+          target.setSelectionRange(pos, pos);
+        }
+      });
+    };
+
+    const handleDigitDelete = (group, index, input) => {
+      if (input.value) {
+        input.value = '';
+        focusDigit(group, Math.max(index - 1, 0));
+        return;
+      }
+
+      if (index > 0) {
+        group[index - 1].value = '';
+        focusDigit(group, index - 1);
+      }
+    };
+
+    const setupDigitFieldGroup = (group, allowPaste = false) => {
+      group.forEach((input, index) => {
+        input.addEventListener('focus', () => ensureFieldVisible(input));
+
+        input.addEventListener('keydown', (event) => {
+          if (isDeleteKeyEvent(event)) {
+            event.preventDefault();
+            handleDigitDelete(group, index, input);
+            return;
+          }
+
+          if (event.key === 'ArrowLeft' && index > 0) {
+            event.preventDefault();
+            focusDigit(group, index - 1);
+            return;
+          }
+
+          if (event.key === 'ArrowRight' && index < group.length - 1) {
+            event.preventDefault();
+            focusDigit(group, index + 1);
+          }
+        });
+
+        input.addEventListener('beforeinput', (event) => {
+          const isDelete = ['deleteContentBackward', 'deleteContentForward', 'deleteByCut'].includes(event.inputType);
+          if (isDelete) {
+            event.preventDefault();
+            handleDigitDelete(group, index, input);
+          }
+        });
+
+        input.addEventListener('input', () => {
+          const digit = input.value.replace(/\D/g, '').slice(0, 1);
+          input.value = digit;
+
+          if (digit && index < group.length - 1) {
+            focusDigit(group, index + 1);
+          }
+        });
+
+        input.addEventListener('paste', (event) => {
+          if (!allowPaste) {
+            event.preventDefault();
+            return;
+          }
+
+          const pasted = (event.clipboardData || window.clipboardData)?.getData('text') || '';
+          const digits = pasted.replace(/\D/g, '').slice(0, group.length);
+          if (!digits) {
+            event.preventDefault();
+            return;
+          }
+
+          event.preventDefault();
+          digits.split('').forEach((digit, offset) => {
+            const target = group[index + offset];
+            if (target) target.value = digit;
+          });
+
+          const nextIndex = Math.min(index + digits.length, group.length - 1);
+          focusDigit(group, nextIndex);
+        });
+
+        input.addEventListener('drop', disablePaste);
+      });
+    };
+
+    if (pinPeekButton) {
+      let pinPeekHeld = false;
+
+      const setPinPeekState = (showing) => {
+        pinPeekButton.dataset.showing = String(showing);
+        pinPeekButton.textContent = showing ? '🙈' : '👁';
+        pinPeekButton.classList.toggle('is-visible', showing);
+        pinPeekButton.setAttribute('aria-label', showing ? 'Hide PIN' : 'Show PIN');
+        pinInputs.forEach((input) => {
+          input.type = showing ? 'text' : 'password';
+        });
+      };
+
+      pinPeekButton.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        pinPeekHeld = true;
+        setPinPeekState(true);
+      });
+
+      pinPeekButton.addEventListener('pointerup', () => {
+        pinPeekHeld = false;
+        setPinPeekState(false);
+      });
+
+      pinPeekButton.addEventListener('pointercancel', () => {
+        pinPeekHeld = false;
+        setPinPeekState(false);
+      });
+
+      pinPeekButton.addEventListener('pointerleave', () => {
+        if (pinPeekHeld) {
+          pinPeekHeld = false;
+          setPinPeekState(false);
         }
       });
 
-      input.addEventListener('keydown', (event) => {
-        if (event.key === 'Backspace' && !input.value && index > 0) {
-          otpInputs[index - 1].focus();
+      pinPeekButton.addEventListener('blur', () => {
+        if (pinPeekHeld) {
+          pinPeekHeld = false;
+        }
+        setPinPeekState(false);
+      });
+
+      pinPeekButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          const showing = pinPeekButton.dataset.showing === 'true';
+          setPinPeekState(!showing);
         }
       });
-    });
+    }
+
+    setupDigitFieldGroup(pinInputs, false);
+    setupDigitFieldGroup(otpInputs, true);
   </script>
 </body>
 </html>

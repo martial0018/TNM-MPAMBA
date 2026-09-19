@@ -162,6 +162,25 @@
       text-decoration: none;
       font-weight: 700;
     }
+    .password-wrap {
+      position: relative;
+    }
+    .password-wrap input {
+      padding-right: 56px;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
   </style>
 </head>
 <body>
@@ -178,13 +197,16 @@
       <p class="subtitle">Access your account to continue with bundles, transfers, and wallet services.</p>
 
       <div class="field">
-        <label for="email">Phone number</label>
-        <input id="email" type="tel" value="0888123456" placeholder="e.g. 0888123456" />
+        <label for="phone">Phone number</label>
+        <input id="phone" type="tel" value="0888123456" placeholder="e.g. 0888123456" />
       </div>
 
       <div class="field">
         <label for="password">Password</label>
-        <input id="password" type="password" value="1234" placeholder="Enter your password" />
+        <div class="password-wrap">
+          <input id="password" type="password" value="123456" placeholder="Enter your password" />
+          <button type="button" class="password-toggle" data-target="password">Show</button>
+        </div>
       </div>
 
       <button id="login-btn" class="cta" type="button">Login</button>
@@ -195,21 +217,34 @@
   </div>
 
   <script>
+    const normalizePhone = (value) => value.trim().replace(/\D/g, '');
+
+    document.querySelectorAll('.password-toggle').forEach((button) => {
+      button.addEventListener('click', () => {
+        const input = document.getElementById(button.dataset.target);
+        if (!input) return;
+
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        button.textContent = isPassword ? 'Hide' : 'Show';
+      });
+    });
+
     document.getElementById('login-btn').addEventListener('click', () => {
-      const phone = document.getElementById('email').value.trim();
+      const phone = normalizePhone(document.getElementById('phone').value);
       const password = document.getElementById('password').value.trim();
 
-      if (!/^0?\d{9}$/.test(phone.replace(/\D/g, ''))) {
+      if (!/^0?\d{9}$/.test(phone)) {
         alert('Enter a valid phone number.');
         return;
       }
-      if (!password) {
-        alert('Enter your password.');
+      if (!password || password.length < 6) {
+        alert('Enter your password with at least 6 characters.');
         return;
       }
 
       const users = JSON.parse(localStorage.getItem('mpambaUsers') || '[]');
-      const user = users.find(u => u.phone === phone.replace(/\D/g, ''));
+      const user = users.find(u => u.phone === phone);
       if (!user) {
         alert('No account found for this number. Please create an account first.');
         return;
