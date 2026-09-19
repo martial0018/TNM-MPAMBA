@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mpamba Sign Up</title>
+  <style>
+    :root {
+      --green: #00a651;
+      --green-deep: #073d25;
+      --ink: #10251b;
+      --muted: #5f756b;
+      --line: #dfece4;
+      --paper: #f4faf7;
+      --white: #ffffff;
+      --orange: #ff6600;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top left, rgba(19,183,113,.10), transparent 30%), linear-gradient(180deg, #f4faf7, #eefaf3);
+      color: var(--ink);
+    }
+    .card {
+      width: min(100%, 430px);
+      background: var(--white);
+      border: 1px solid rgba(7,61,37,.08);
+      border-radius: 28px;
+      box-shadow: 0 20px 55px rgba(7,61,37,.08);
+      overflow: hidden;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.9);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-weight: 700;
+      color: var(--green-deep);
+    }
+    .brand-logo-image {
+      display: block;
+      width: 72px;
+      height: 44px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 8px;
+      padding: 2px 4px;
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,.12));
+    }
+    .brand-powered {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1px;
+      width: 82px;
+      height: 44px;
+      margin-left: -6px;
+      padding: 4px 8px 4px 9px;
+      border: 1px solid rgba(255, 102, 0, .4);
+      border-left: 0;
+      border-radius: 0 8px 8px 0;
+      background: linear-gradient(90deg, rgba(255,102,0,.08), transparent);
+      line-height: 1.05;
+    }
+    .brand-powered span:first-child {
+      color: var(--orange);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      font-style: italic;
+    }
+    .brand-powered span:last-child {
+      color: var(--green-deep);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .secure-tag { color: var(--orange); font-weight: 700; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+    .content { padding: 22px 18px 18px; }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      text-align: center;
+      color: var(--green-deep);
+    }
+    .subtitle {
+      margin: 0 0 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .field { margin-bottom: 16px; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+    input {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 13px 14px;
+      font-size: 16px;
+      outline: none;
+      background: #fafdfb;
+      color: var(--ink);
+    }
+    input:focus {
+      border-color: rgba(0,166,81,.6);
+      box-shadow: 0 0 0 4px rgba(0,166,81,.08);
+    }
+    .cta {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(180deg, var(--green), #0a9d4f);
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 14px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .secondary {
+      width: 100%;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--green-deep);
+      padding: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .helper {
+      margin-top: 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .helper a {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="topbar">
+      <div class="brand">
+        <img class="brand-logo-image" src="assets/images/mpamba_logo_transparent.png" alt="TNM logo" />
+        <div class="brand-powered"><span>POWERED BY</span><span>MPAMBA</span></div>
+      </div>
+      <span class="secure-tag">Sign up</span>
+    </div>
+    <div class="content">
+      <h1>Create account</h1>
+      <p class="subtitle">Set up your new Mpamba account to start managing your wallet.</p>
+
+      <div class="field">
+        <label for="name">Full name</label>
+        <input id="name" type="text" placeholder="e.g. Chifundo Banda" />
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone number</label>
+        <input id="phone" type="tel" placeholder="e.g. 0888123456" />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Choose a password" />
+      </div>
+
+      <button id="signup-btn" class="cta" type="button">Create account</button>
+      <button id="login-btn" class="secondary" type="button">Back to login</button>
+
+      <div class="helper">Already have an account? <a href="login.html">Login</a></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('signup-btn').addEventListener('click', () => {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim().replace(/\D/g, '');
+      const password = document.getElementById('password').value.trim();
+
+      if (!name) {
+        alert('Enter your full name.');
+        return;
+      }
+      if (!/^0?\d{9}$/.test(phone)) {
+        alert('Enter a valid phone number.');
+        return;
+      }
+      if (!password || password.length < 4) {
+        alert('Password must be at least 4 characters long.');
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('mpambaUsers') || '[]');
+      if (users.some(u => u.phone === phone)) {
+        alert('This number already has an account. Please login instead.');
+        return;
+      }
+
+      users.push({ name, phone, password });
+      localStorage.setItem('mpambaUsers', JSON.stringify(users));
+      localStorage.setItem('mpambaSession', JSON.stringify({ phone, name }));
+      window.location.href = 'index.html';
+    });
+
+    document.getElementById('login-btn').addEventListener('click', () => {
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

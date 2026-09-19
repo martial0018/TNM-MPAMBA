@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TNM & Mpamba Digital Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --green:#00a651; --green-deep:#073d25; --red:#e31b23; --orange:#ff6600; --yellow:#ffc20e; --ink:#10251b; --muted:#698075; --line:#dce9e1; --paper:#f4f8f5; --white:#fff; }
+    :root.dark { --ink:#e8f2ec; --muted:#9db3a6; --line:#234636; --paper:#07150f; --white:#0e2118; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:radial-gradient(circle at 0 0,#e8f7ee 0,transparent 30%),radial-gradient(circle at 100% 12%,#fff0d8 0,transparent 24%),linear-gradient(180deg,#f7fbf9 0%,#eef8f3 100%); font-family:'DM Sans',sans-serif; transition:.25s; }
+    :root.dark body { background:radial-gradient(circle at 0 0,#0b3822 0,transparent 30%),radial-gradient(circle at 100% 15%,#47250d 0,transparent 24%),linear-gradient(180deg,#07150f 0%,#0a1e16 100%); }
+    button,input,select { font:inherit; } button { cursor:pointer; }
+    .ticker { background:var(--green-deep); color:#d5f6e2; padding:9px 5vw; font-size:12px; overflow:hidden; white-space:nowrap; }
+    .ticker span { display:inline-block; animation:slide 22s linear infinite; }
+    @keyframes slide { from { transform:translateX(100vw); } to { transform:translateX(-100%); } }
+    header { position:sticky; top:0; z-index:5; background:color-mix(in srgb, var(--white) 90%, transparent); backdrop-filter:blur(18px); border-bottom:1px solid var(--line); }
+    .nav { max-width:1200px; margin:auto; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .brand { display:flex; align-items:center; gap:12px; color:var(--green-deep); }
+    .logo { position:relative; display:inline-flex; align-items:center; gap:4px; overflow:hidden; isolation:isolate; background:linear-gradient(145deg,#15c777 0%,#079653 44%,var(--green-deep) 100%); color:white; padding:8px 13px 9px; border:1px solid #8af0b577; border-radius:14px; font-family:'Space Grotesk'; font-size:25px; font-weight:700; letter-spacing:-2.5px; line-height:1; box-shadow:0 9px 22px #00a65140, inset 0 1px #ffffff44, inset 0 -5px 12px #00351f55; }
+    .logo:before { content:''; position:absolute; z-index:-1; width:54px; height:54px; right:-22px; top:-27px; border:1px solid #ffffff45; border-radius:50%; box-shadow:0 0 0 8px #ffffff0d,0 0 0 16px #ffffff08; animation:logo-orbit 5s ease-in-out infinite; }
+    .logo:after { content:''; position:absolute; z-index:-1; inset:0; opacity:.2; background-image:linear-gradient(115deg,transparent 20%,#ffffff 21%,transparent 22%),linear-gradient(0deg,transparent 49%,#ffffff 50%,transparent 51%); background-size:18px 18px,100% 10px; mix-blend-mode:overlay; }
+    .logo-word { text-shadow:0 2px 5px #00351f88; }
+    .logo-dot { position:relative; z-index:1; width:8px; height:8px; margin-top:7px; border-radius:50%; background:var(--orange); box-shadow:0 0 0 3px #ff660033,0 0 12px #ff8b42; }
+    .logo-dot:before { content:''; position:absolute; inset:-5px; border:1px solid #ff9a5c99; border-radius:50%; animation:logo-pulse 2.4s ease-out infinite; }
+    .brand-logo-image { display:block; width:72px; height:44px; object-fit:contain; mix-blend-mode:normal; filter:drop-shadow(0 3px 6px #0004); background:#fff; border-radius:8px; padding:2px 4px; }
+    :root.dark .brand-logo-image { opacity:1; filter:brightness(1.08) saturate(1.08) contrast(1.12) drop-shadow(0 3px 8px #0008); background:#fff; border-radius:8px; padding:2px 4px; }
+    .brand { gap:0; }
+    .brand-powered { display:flex; flex-direction:column; justify-content:center; gap:1px; width:82px; height:44px; min-height:0; margin-left:-6px; padding:4px 8px 4px 9px; border:1px solid #ff660066; border-left:0; border-radius:0 8px 8px 0; background:linear-gradient(90deg,#ff660014,transparent); line-height:1.05; }
+    .brand-powered span:first-child { color:var(--orange); font-size:9px; font-style:italic; font-weight:700; letter-spacing:1.1px; }
+    .brand-powered span:last-child { color:var(--ink); font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; }
+    :root.dark .brand-powered span:last-child { color:#f0fff4; }
+    @keyframes logo-orbit { 0%,100% { transform:rotate(0deg) scale(1); } 50% { transform:rotate(12deg) scale(1.06); } }
+    @keyframes logo-pulse { 0% { transform:scale(.65); opacity:.9; } 70%,100% { transform:scale(1.5); opacity:0; } }
+    .logo-word { position:relative; z-index:1; }
+    .brand small { display:block; color:var(--muted); font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+    .header-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; }
+    .header-top-actions { display:flex; align-items:center; gap:8px; margin-left:auto; justify-content:flex-end; height:40px; }
+    .header-top-actions > * { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; line-height:1; padding:0; }
+    .auth-menu-btn { border:1px solid var(--line); background:var(--paper); color:var(--green-deep); border-radius:12px; padding:10px 12px; font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase; display:inline-flex; align-items:center; justify-content:center; line-height:1.1; text-shadow:0 0 0 currentColor; }
+    .auth-menu-btn.signup-menu-btn { background:var(--green); color:#ffffff; border-color:var(--green); box-shadow:0 8px 16px rgba(0,166,81,.22); }
+    .sub-header { border-bottom:1px solid var(--line); background:rgba(255,255,255,.55); backdrop-filter:blur(12px); }
+    .sub-header-inner { max-width:1200px; margin:0 auto; padding:0 24px 16px; display:flex; justify-content:flex-end; }
+    .wallet { display:flex; align-items:center; gap:14px; background:white; border:1px solid var(--line); padding:7px 8px 7px 15px; border-radius:16px; box-shadow:0 6px 20px #12351b0c; }
+    .balance-row { display:flex; align-items:center; gap:8px; }
+    .balance-toggle { width:28px; height:28px; border:1px solid var(--line); border-radius:50%; background:rgba(0,166,81,.08); color:var(--green-deep); font-size:14px; display:inline-flex; align-items:center; justify-content:center; padding:0; }
+    #toggle-balance::after { content:none !important; }
+    .guest-access { max-width:1200px; margin:22px auto 0; padding:0 24px; display:none; }
+    .guest-access-card { display:flex; align-items:center; justify-content:space-between; gap:16px; background:linear-gradient(135deg,#ffffff,#edf8f1); border:1px solid var(--line); border-radius:20px; padding:22px 24px; box-shadow:0 16px 34px rgba(12,36,26,.06); }
+    .guest-access-card h2 { font-size:28px; margin:0 0 8px; }
+    .guest-access-card p { margin:0; color:var(--muted); }
+    .guest-actions { display:flex; gap:10px; flex-wrap:wrap; }
+    .guest-actions button { border:0; border-radius:12px; padding:12px 18px; font-weight:700; }
+    .guest-actions .login-btn { background:var(--green); color:white; }
+    .guest-actions .signup-btn { background:var(--paper); color:var(--green-deep); border:1px solid var(--line); }
+    .wallet b { display:block; font-family:'Space Grotesk'; font-size:17px; }
+    .wallet label { color:var(--orange); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+    .wallet button,.primary { border:0; color:white; background:var(--orange); border-radius:11px; padding:10px 14px; font-weight:700; }
+    #confirm-bundle.primary,
+    #confirm-bundle {
+      background:linear-gradient(135deg,#00a651 0%,#0d8b59 100%) !important;
+      box-shadow:0 8px 16px rgba(0,166,81,.22) !important;
+    }
+    .theme-toggle { border:1px solid var(--line); background:var(--paper); color:var(--ink); width:39px; height:39px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(16,37,27,.06); line-height:1; padding:0; }
+    .menu-toggle { border:1px solid var(--line); background:var(--paper); color:var(--ink); width:39px; height:39px; border-radius:12px; display:none; align-items:center; justify-content:center; font-size:20px; line-height:1; box-shadow:0 3px 10px rgba(16,37,27,.06); padding:0; }
+    .signout-btn { width:auto; min-width:94px; padding:10px 12px; font-weight:700; font-size:12px; letter-spacing:.08em; text-transform:uppercase; border-radius:12px; line-height:1; display:inline-flex; align-items:center; justify-content:center; }
+    main { max-width:1200px; margin:auto; padding:34px 24px 70px; }
+    .hero { display:grid; grid-template-columns:1.25fr .75fr; gap:25px; background:linear-gradient(120deg,#072d1d 0%,#0d4c35 35%,#0a7c4c 68%,#14a85d 100%); color:white; padding:42px; border-radius:28px; overflow:hidden; position:relative; box-shadow:0 24px 55px rgba(5,43,30,.18), inset 0 1px rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.12); }
+    .hero:after { content:''; position:absolute; width:380px; height:380px; border:1px solid rgba(255,255,255,.18); border-radius:50%; right:-110px; bottom:-210px; box-shadow:0 0 0 35px rgba(255,255,255,.08),0 0 0 70px rgba(255,255,255,.04); }
+    .eyebrow { color:#b8f2cf; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; }
+    h1,h2,h3 { font-family:'Space Grotesk',sans-serif; margin:0; letter-spacing:-1px; } h1 { font-size:clamp(32px,5vw,60px); line-height:1.02; max-width:650px; margin:12px 0 16px; } h2 { font-size:26px; } h3 { font-size:18px; }
+    .hero p { color:#d5ebe0; max-width:570px; line-height:1.6; }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:26px; } .hero-actions button { border:1px solid #ffffff35; background:#ffffff12; color:white; padding:11px 15px; border-radius:12px; font-weight:600; } .hero-actions button:hover { background:#ffffff22; }
+    .metrics { display:grid; grid-template-columns:1fr 1fr; gap:12px; align-content:center; position:relative; z-index:1; } .metric { background:rgba(4,38,25,.42); border:1px solid rgba(255,255,255,.18); padding:18px; border-radius:18px; box-shadow:inset 0 1px rgba(255,255,255,.12); } .metric strong { display:block; font:700 25px 'Space Grotesk'; margin:8px 0; } .metric small { color:#c7ebd5; }
+    .tabs { display:flex; gap:8px; overflow:auto; margin:28px 0 22px; padding-bottom:4px; } .tab { white-space:nowrap; border:1px solid var(--line); background:white; color:var(--muted); border-radius:12px; padding:12px 16px; font-weight:700; } .tab.active { color:white; background:var(--green); border-color:var(--green); box-shadow:0 7px 16px #00a6512e; }
+    .panel { background:rgba(255,255,255,0.82); border:1px solid rgba(15,61,42,.08); border-radius:24px; padding:22px; box-shadow:0 16px 42px rgba(12,36,26,.06), inset 0 1px rgba(255,255,255,.7); }
+    .store-head { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; } .filters { display:flex; gap:8px; flex-wrap:wrap; } .filters button { border:0; background:#eaf3ed; color:var(--muted); border-radius:9px; padding:8px 11px; font-size:12px; font-weight:700; } .filters button.active { background:var(--green); color:white; }
+    .workspace { display:grid; grid-template-columns:1.4fr .8fr; gap:22px; align-items:start; } .catalog { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px; }
+    .bundle { background:linear-gradient(180deg,#ffffff 0%,#f8faf9 100%); border:1px solid rgba(15,61,42,.08); border-radius:18px; padding:17px; transition:.2s; position:relative; box-shadow:0 10px 22px rgba(12,36,26,.03), inset 0 1px rgba(255,255,255,.7); } .bundle:hover,.bundle.selected { transform:translateY(-2px); border-color:rgba(0,166,81,.6); box-shadow:0 16px 28px rgba(0,166,81,.1); background:linear-gradient(180deg,#ffffff 0%,#f1faf5 100%); } .bundle .tag { color:var(--green); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; } .bundle h3 { margin:7px 0; font-size:16px; } .bundle p { margin:0 0 15px; color:var(--muted); font-size:12px; } .price { color:var(--orange); font:700 20px 'Space Grotesk'; }
+    .checkout { position:sticky; top:100px; max-height:calc(100vh - 120px); overflow:auto; transition:opacity .2s ease, transform .2s ease; background:linear-gradient(180deg,#f7fff9,#edf8f1); border:1px solid rgba(18,98,66,.12); border-top:4px solid var(--green); border-radius:20px; padding:16px; box-shadow:0 18px 40px rgba(8,42,27,.08), inset 0 1px rgba(255,255,255,.8); } .checkout.hidden { display:none; } .checkout header { position:static; background:none; backdrop-filter:none; border:0; padding:0 0 15px; } .checkout header h3 { color:var(--green-deep); } .summary { background:linear-gradient(180deg,#edf9f1,#e6f5eb); border:1px solid rgba(15,61,42,.09); border-radius:15px; padding:15px; margin:14px 0; box-shadow:inset 0 1px rgba(255,255,255,.6); } .summary p { color:var(--muted); font-size:12px; margin:7px 0 0; } .field { margin:13px 0; } .field label { display:block; color:var(--muted); font-size:11px; font-weight:700; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px; } .field input,.field select { width:100%; border:1px solid var(--line); border-radius:11px; padding:12px; background:white; outline:none; box-shadow:inset 0 1px rgba(0,0,0,.02); } .field input:focus { border-color:var(--green); } .primary { width:100%; background:linear-gradient(135deg,#ff7a1a,#ff5d00); padding:13px; box-shadow:0 8px 16px rgba(255,102,0,.28); }
+    #buy-yanga.primary,
+    #buy-yanga {
+      background:linear-gradient(135deg,#00a651 0%,#0d8b59 100%) !important;
+      box-shadow:0 8px 16px rgba(0,166,81,.22) !important;
+    }
+    #buy-yanga.primary:hover,
+    #buy-yanga:hover {
+      box-shadow:0 12px 24px rgba(0,166,81,.28) !important;
+    }
+    .empty { color:var(--muted); text-align:center; padding:38px 10px; font-size:13px; }
+    .feature { display:none; } .feature.active { display:block; } .feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:20px; } .service { border:1px solid var(--line); border-radius:16px; padding:20px; background:var(--white); } .service p { color:var(--muted); font-size:13px; line-height:1.5; } .service button { border:0; background:#eaf5ed; color:var(--green-deep); border-radius:10px; padding:9px 12px; font-weight:700; }
+    .phone { max-width:330px; margin:20px auto 0; padding:18px; border-radius:32px; background:#020806; border:5px solid #234636; color:#77e9a8; } .phone-screen { min-height:150px; padding:14px; border:1px solid #234636; border-radius:15px; white-space:pre-line; font:12px/1.6 monospace; } .dial-pad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; } .dial-pad button { border:0; border-radius:10px; padding:12px; color:white; background:#123d29; }
+    .modal { position:fixed; inset:0; z-index:20; display:none; place-items:center; padding:18px; background:#00130dcc; backdrop-filter:blur(8px); } .modal.open { display:grid; } .modal-card { width:min(420px,100%); padding:24px; border-radius:22px; background:var(--white); border:1px solid var(--line); box-shadow:0 25px 70px #0007; } .confirm-box { display:grid; gap:14px; } .confirm-bundle { border:1px solid var(--line); border-radius:14px; background:var(--paper); padding:14px; } .confirm-actions { display:flex; gap:10px; margin-top:6px; } .confirm-actions button { flex:1; } .confirm-actions .primary, #confirm-bundle.primary { background:linear-gradient(135deg,#00a651 0%,#0d8b59 100%); box-shadow:0 8px 16px rgba(0,166,81,.22); } .pin-row { display:flex; justify-content:center; gap:9px; margin:20px 0; } .pin-row input { width:47px; height:49px; text-align:center; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font-size:20px; }
+    .authorizing-screen { position:fixed; inset:0; z-index:30; display:none; place-items:center; background:rgba(1,13,9,.58); backdrop-filter:blur(6px); } .authorizing-screen.open { display:grid; } .authorizing-card { width:min(360px,calc(100vw - 32px)); padding:32px 22px; border-radius:24px; background:var(--white); border:1px solid var(--line); box-shadow:0 30px 90px rgba(0,0,0,.28); text-align:center; } .authorizing-spinner { width:56px; height:56px; margin:0 auto 16px; border-radius:50%; border:5px solid rgba(0,166,81,.14); border-top-color:var(--green); animation:spin360 .8s linear infinite; } @keyframes spin360 { to { transform:rotate(360deg); } } .authorizing-title { color:var(--green-deep); font-size:28px; font-weight:700; font-family:'Space Grotesk',sans-serif; letter-spacing:-.7px; margin-bottom:6px; } .authorizing-subtitle { color:var(--muted); font-size:13px; }
+    body { background-image:radial-gradient(circle at 8% 8%,#d9f4e4 0,transparent 26%),radial-gradient(circle at 92% 22%,#ffe8c9 0,transparent 24%),repeating-linear-gradient(135deg,#ffffff18 0,#ffffff18 1px,transparent 1px,transparent 9px); }
+    :root.dark body { background-image:radial-gradient(circle at 8% 8%,#0d4328 0,transparent 26%),radial-gradient(circle at 92% 22%,#51280f 0,transparent 24%),repeating-linear-gradient(135deg,#ffffff06 0,#ffffff06 1px,transparent 1px,transparent 9px); }
+    .nav { min-height:76px; }
+    .brand strong { font-family:'Space Grotesk',sans-serif; font-size:14px; letter-spacing:-.2px; }
+    .brand small { color:var(--orange); display:flex; flex-direction:column; justify-content:center; gap:1px; min-height:30px; padding:3px 9px 4px; border-left:2px solid var(--orange); background:linear-gradient(90deg,#ff660014,transparent); font-size:8px; font-weight:700; line-height:1.05; letter-spacing:1.4px; }
+    .brand small span:last-child { color:var(--ink); font-family:'Space Grotesk',sans-serif; font-size:12px; letter-spacing:1px; }
+    .brand small span:first-child { display:block; font-style:italic; transform:skewX(-12deg); transform-origin:left center; letter-spacing:1.1px; }
+    :root.dark .brand small span:last-child { color:#f0fff4; }
+    .hero { isolation:isolate; border:1px solid #8af0b544; }
+    .hero:before { content:''; position:absolute; width:520px; height:520px; right:-170px; top:-190px; border:1px solid #ffffff20; border-radius:50%; box-shadow:0 0 0 42px #ffffff08,0 0 0 84px #ffffff05; pointer-events:none; }
+    .hero h1 { text-shadow:0 5px 20px #002d1c55; }
+    .hero-actions button { backdrop-filter:blur(8px); transition:transform .2s,background .2s; }
+    .hero-actions button:hover { transform:translateY(-2px); }
+    .metric { box-shadow:inset 0 1px #ffffff14,0 12px 24px #002b1a22; }
+    .tabs { scrollbar-width:none; }
+    .tabs::-webkit-scrollbar { display:none; }
+    .tab { box-shadow:0 3px 10px #17472c0a; transition:transform .2s,box-shadow .2s; }
+    .tab:hover { transform:translateY(-1px); box-shadow:0 7px 16px #17472c12; }
+    .panel { box-shadow:0 18px 40px #17472c10; }
+    .store-head h2 { font-size:28px; }
+    .bundle { box-shadow:0 5px 15px #17472c08; }
+    .bundle h3 { letter-spacing:-.4px; }
+    .checkout { border-top:3px solid var(--orange); }
+    .primary { transition:transform .2s,box-shadow .2s; }
+    .primary:hover { transform:translateY(-2px); box-shadow:0 12px 24px #ff660044; }
+    :root.dark header { background:rgba(5,20,13,.88); border-bottom-color:#1d3b2b; }
+    :root.dark .brand { color:#f0f8f3; }
+    :root.dark .brand small { color:#ff9a55; }
+    :root.dark .wallet { background:#0e2118; border-color:#2d5942; box-shadow:0 8px 24px #0004; }
+    :root.dark .wallet b { color:#f5fff8; }
+    :root.dark .guest-access-card { background:linear-gradient(135deg,#0d251a,#112f22); border-color:#2d5942; box-shadow:0 16px 34px rgba(0,0,0,.25); }
+    :root.dark .guest-access-card h2 { color:#f3fff7; }
+    :root.dark .guest-access-card p { color:#cbebd8; }
+    :root.dark .theme-toggle, :root.dark .menu-toggle { background:#0b1b13; border-color:#2d5942; color:#d5f5df; box-shadow:inset 0 1px rgba(255,255,255,.04); }
+    :root.dark .auth-menu-btn { background:#102d1d; color:#f4fff8; border-color:#3d735e; box-shadow:inset 0 1px rgba(255,255,255,.04); }
+    :root.dark .auth-menu-btn.signup-menu-btn { background:linear-gradient(135deg,#1cbf71 0%,#0d9c5b 100%); color:#ffffff; border-color:#2dd487; }
+    :root.dark .signout-btn { background:#143f2e; color:#f5fff8; border-color:#3d735e; }
+    :root.dark .menu-actions { background:rgba(8,20,14,.97); border-color:#2d5942; box-shadow:0 16px 32px rgba(0,0,0,.35); }
+    :root.dark .menu-actions .auth-menu-btn, :root.dark .menu-actions .signout-btn { background:#112c20; color:#f4fff8; border-color:#3d735e; }
+    :root.dark .tab { background:#0d2118; border-color:#2a503b; color:#a8c1b2; }
+    :root.dark .tab.active { background:var(--green); border-color:var(--green); color:white; }
+    :root.dark .filters button { background:#173326; color:#a9c5b4; }
+    :root.dark .filters button.active { background:var(--green); color:white; }
+    :root.dark .field input, :root.dark .field select { background:#091a11; border-color:#2a503b; color:#edf9f0; }
+    :root.dark .summary { background:#102d1e; border-color:#2e6748; }
+    :root.dark .service { background:#0e2118; border-color:#2a503b; }
+    :root.dark .service button { background:#173b28; color:#bdf2ce; }
+    :root.dark #bundle-search { background:#091a11 !important; border-color:#2a503b !important; color:#edf9f0; }
+    :root.dark #bundle-search::placeholder { color:#789587; }
+    :root.dark .checkout { background:linear-gradient(180deg,#0b1e16,#0a2519); border-color:#264d3b; border-top-color:var(--green); box-shadow:0 16px 28px rgba(0,0,0,.28); }
+    :root.dark .checkout header h3 { color:#d3f6df; }
+    :root.dark .summary { background:linear-gradient(180deg,#102d1d,#0c261a); border-color:#2b5d48; }
+    :root.dark .brand-powered { border-color:#ff8a4d99; background:linear-gradient(90deg,#ff660026,#0d2418); box-shadow:inset 0 1px #ffffff0d; }
+    :root.dark .wallet button { box-shadow:0 5px 16px #ff660044, inset 0 1px #ffffff33; }
+    :root.dark .hero { box-shadow:0 22px 50px #0007, inset 0 1px #8af0b522; }
+    :root.dark .panel { background:rgba(10,29,19,.88); border-color:#244b37; box-shadow:0 18px 42px #0005, inset 0 1px #ffffff08; }
+    :root.dark .bundle { background:#0d2619; border-color:#28543d; box-shadow:0 7px 18px #0003, inset 0 1px #ffffff08; }
+    :root.dark .bundle:hover, :root.dark .bundle.selected { background:#123522; border-color:#28c878; box-shadow:0 10px 24px #00a6512e, inset 0 1px #8af0b522; }
+    :root.dark .bundle .tag { color:#7de8a9; }
+    :root.dark .bundle p { color:#aac4b4; }
+    :root.dark .price { color:#ff985a; }
+    :root.dark .filters button:hover { background:#24533a; color:#effff4; }
+    :root.dark .tab.active { box-shadow:0 8px 20px #00a65144, inset 0 1px #8af0b544; }
+    @media (max-width:480px) { .brand { gap:0; } .brand-logo-image { width:64px; height:40px; } .brand-powered { width:70px; height:40px; margin-left:-6px; padding:3px 5px; border-radius:0 6px 6px 0; } .brand-powered span:first-child { font-size:8px; letter-spacing:.8px; } .brand-powered span:last-child { font-size:11px; letter-spacing:.7px; } }
+    .toast { position:fixed; right:22px; bottom:22px; z-index:10; background:var(--green-deep); color:white; padding:14px 17px; border-radius:13px; box-shadow:0 12px 28px #0003; animation:pop .25s ease; } @keyframes pop { from { transform:translateY(12px); opacity:0; } to { transform:none; opacity:1; } }
+    @media (max-width:800px) { .nav { padding:14px 16px; } .brand small { display:none; } .wallet { padding-left:10px; } main { padding:22px 16px 50px; } .hero { grid-template-columns:1fr; padding:28px 23px; } .metrics { grid-template-columns:repeat(2,1fr); } .workspace { grid-template-columns:1fr; } .checkout { position:sticky; bottom:10px; top:auto; max-height:min(42vh,360px); } .catalog { grid-template-columns:1fr 1fr; } .store-head { align-items:flex-start; flex-direction:column; } .feature-grid { grid-template-columns:1fr; } .menu-toggle { display:inline-flex; } .menu-actions { position:absolute; top:52px; right:0; display:none; flex-direction:column; align-items:stretch; min-width:190px; padding:10px; border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.98); box-shadow:0 16px 32px rgba(0,0,0,.14); backdrop-filter:blur(10px); } .menu-actions.open { display:flex; } .menu-actions > * { width:100%; } .menu-actions .auth-menu-btn, .menu-actions .signout-btn { font-size:11px; line-height:1.2; text-align:center; letter-spacing:.09em; color:var(--green-deep); } .header-top-actions { align-items:center; gap:6px; } }
+    :root.dark .menu-actions { background:rgba(8,20,14,.97); border-color:#2d5942; box-shadow:0 16px 32px rgba(0,0,0,.35); }
+    :root.dark .menu-actions .auth-menu-btn, :root.dark .menu-actions .signout-btn { color:#f4fff8; }
+    @media (max-width:480px) { .nav { min-height:64px; padding:9px 11px; gap:7px; } .brand { flex:1 1 auto; gap:0; min-width:0; } .brand-logo-image { width:64px; height:40px; } .logo { flex:0 0 auto; font-size:20px; padding:7px 10px 8px; } .brand small { display:inline-flex; max-width:96px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:8px; padding:4px 6px; letter-spacing:.65px; } .nav > div:last-child { flex:0 0 auto; gap:6px !important; } .sub-header-inner { padding:0 0 12px; justify-content:flex-end; } .wallet { gap:5px; padding:4px 4px 4px 8px; border-radius:14px 0 0 14px; width:calc(100vw - 8px); max-width:calc(100vw - 8px); margin-right:-4px; } .wallet > div { min-width:0; } .wallet label { font-size:7px; letter-spacing:.45px; } .wallet b { display:block; max-width:120px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:12px; letter-spacing:-.3px; } .wallet button { width:29px; height:29px; padding:0; font-size:0; } .wallet button:after { content:'+'; font-size:18px; } #toggle-balance { font-size:14px !important; } #toggle-balance:after { content:none !important; } .theme-toggle { width:31px; height:31px; font-size:13px; } .signout-btn { min-width:0; padding:0 8px; font-size:10px; letter-spacing:.06em; } main { padding:14px 12px 40px; } .hero { padding:22px 18px; border-radius:20px; gap:18px; } .hero h1 { font-size:32px; margin:9px 0 12px; } .hero p { font-size:13px; margin:0; } .hero-actions { margin-top:17px; } .hero-actions button { padding:9px 12px; font-size:12px; } .metrics { gap:7px; } .metric { padding:11px; border-radius:13px; } .metric strong { font-size:17px; margin:5px 0; } .metric small { font-size:9px; line-height:1.25; display:block; } .tabs { margin:17px 0 15px; gap:6px; } .tab { padding:10px 12px; font-size:11px; } .panel { padding:15px; border-radius:17px; } .store-head { gap:11px; margin-bottom:13px; } .store-head h2 { font-size:22px; } .filters { width:calc(100vw - 54px); flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; } .filters::-webkit-scrollbar { display:none; } .filters button { flex:0 0 auto; padding:8px 10px; } .catalog { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; } .bundle { display:block; min-width:0; padding:11px; border-radius:13px; } .bundle .tag { display:block; font-size:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .bundle h3 { margin:5px 0; font-size:13px; line-height:1.15; } .bundle p { margin:0 0 9px; font-size:10px; line-height:1.25; min-height:25px; } .bundle .price { display:block; padding-top:7px; border-top:1px solid var(--line); font-size:15px; white-space:nowrap; } .checkout { margin-top:4px; } .checkout header { padding-bottom:10px; } .checkout .summary { margin:10px 0; } .feature-grid { gap:10px; } }
+  </style>
+</head>
+<body>
+  <div class="ticker"><span>TNM 5G coverage across Malawi &nbsp; | &nbsp; New slashed bundles today &nbsp; | &nbsp; Zero-fee Mpamba transfers &nbsp; | &nbsp; Always With You</span></div>
+  <header><nav class="nav"><div class="brand"><img class="brand-logo-image" src="assets/images/mpamba_logo_transparent.png" alt="TNM logo"><div class="brand-powered"><span>POWERED BY</span><span>MPAMBA</span></div></div><div class="header-actions"><div class="header-top-actions"><button id="theme-toggle" class="theme-toggle" title="Toggle theme" type="button" aria-label="Toggle color mode">☾</button><button id="menu-toggle" class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">☰</button><div class="menu-actions"><button class="auth-menu-btn login-menu-btn" data-auth="login" type="button">Login</button><button class="auth-menu-btn signup-menu-btn" data-auth="signup" type="button">Sign up</button><button id="logout-btn" class="theme-toggle signout-btn" title="Log out" type="button">Sign out</button></div></div></div></nav></header>
+  <div id="guest-access" class="guest-access">
+    <div class="guest-access-card">
+      <div>
+        <h2>Welcome to TNM Digital Hub</h2>
+        <p>Login or create an account to start buying bundles and sending money.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sub-header"><div class="sub-header-inner"><div class="wallet"><div><label>Balance</label><div class="balance-row"><b id="balance">MWK 50,000</b><button id="toggle-balance" class="balance-toggle" type="button" aria-label="Hide balance">👁</button></div></div><button id="deposit">+ Cash in</button></div></div></div>
+  <main>
+    <section class="hero"><div><div class="eyebrow">Mudzi Wathu digital hub · Powered by Mpamba</div><h1>Always with you.<br><span style="color:#ffc20e">Made for Malawi.</span></h1><p>Buy Smart Data, Yanga voice bundles and manage your Mpamba wallet in one simple place.</p><div class="hero-actions"><button data-tab="store">Browse bundles</button></div></div><div class="metrics"><div class="metric"><small>Data remaining</small><strong>14.2 GB</strong><small>Valid until 28 Sep 2026</small></div><div class="metric"><small>Yanga voice</small><strong>180 mins</strong><small>All networks</small></div><div class="metric" style="grid-column:1/-1"><small>Pasavute credit</small><strong>MWK 0.00</strong><small>Eligible up to MWK 10,000</small></div></div></section>
+    <div class="tabs"><button class="tab active" data-tab="store">Smart bundles</button><button class="tab" data-tab="mpamba">Mpamba hub</button><button class="tab" data-tab="yanga">Yanga custom</button><button class="tab" data-tab="history">History</button></div>
+    <section id="store" class="feature active"><div class="panel"><div class="store-head"><div><h2>Find your next bundle</h2><p style="color:var(--muted);font-size:13px">Slashed TNM tariffs, ready in seconds.</p></div><div class="filters"><button class="active" data-filter="all">All</button><button data-filter="data">Data</button><button data-filter="voice">Voice</button><button data-filter="sms">SMS</button><button data-filter="pasavute">Pasavute</button><button data-filter="social">Social</button></div></div><div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap"><input id="bundle-search" placeholder="Search bundles..." style="flex:1;min-width:180px;padding:11px;border:1px solid var(--line);border-radius:11px;background:var(--paper);color:var(--ink)"><input id="price-range" type="range" min="50" max="20000" value="20000" style="accent-color:var(--orange)"><span id="price-limit" style="font-size:12px;color:var(--orange);font-weight:700">MWK 20,000</span></div><div class="workspace"><div id="catalog" class="catalog"></div><aside class="panel checkout"><header><h3>Checkout order</h3><small style="color:var(--orange);font-weight:700">Mpamba direct</small></header><div id="checkout-content" class="empty">Select a bundle to configure your purchase.</div></aside></div></div></section>
+    <section id="mpamba" class="feature"><div class="panel"><div class="eyebrow" style="color:var(--orange)">Mpamba financial hub</div><h2>Move money with confidence</h2><div class="feature-grid"><div class="service"><h3>Send money</h3><p>Transfer to any TNM Mpamba or Airtel Money user with zero sender fee.</p><button data-action="send">Start transfer</button></div><div class="service"><h3>Pay a utility bill</h3><p>Choose a provider, enter the account number, and pay directly from Mpamba.</p><div class="field"><label for="biller">Biller</label><select id="biller"><option>ESCOM Electricity</option><option>Blantyre Water Board</option><option>Lilongwe Water Board</option><option>TV subscription</option><option>School fees</option></select></div><div class="field"><label for="biller-account">Account or meter number</label><input id="biller-account" placeholder="e.g. 04231889201"></div><div class="field"><label for="biller-amount">Amount (MWK)</label><input id="biller-amount" type="number" min="1" placeholder="e.g. 5000"></div><button id="pay-bill">Continue to payment</button></div><div class="service"><h3>Cash in</h3><p>Top up your wallet and keep your balance ready for everyday life.</p><button id="deposit-card">Add cash</button></div></div></div></section>
+    <section id="yanga" class="feature"><div class="panel"><div class="eyebrow" style="color:var(--green)">Yanga custom combo</div><h2>Mix your ideal package</h2><p style="color:var(--muted)">Tune your data, voice and SMS allowances.</p><div class="field"><label>Data: <span id="data-value">1 GB</span></label><input id="data" type="range" min="100" max="10000" step="100" value="1000"></div><div class="field"><label>Voice: <span id="voice-value">30 mins</span></label><input id="voice" type="range" min="0" max="300" step="5" value="30"></div><div class="field"><label>SMS: <span id="sms-value">100 SMS</span></label><input id="sms" type="range" min="0" max="1000" step="10" value="100"></div><div class="summary"><strong>Total Yanga price</strong><b id="yanga-price" style="float:right;color:var(--orange);font:700 20px 'Space Grotesk'">MWK 705</b></div><button class="primary" id="buy-yanga">Order via Mpamba</button></div></section>
+    <section id="history" class="feature"><div class="panel"><h2>Transaction history</h2><p style="color:var(--muted);font-size:13px">Your recent purchases and wallet activity.</p><div id="history-list" class="empty">No recorded transaction receipts.</div></div></section>
+  </main>
+  <div id="confirm-modal" class="modal"><div class="modal-card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Confirm your bundle</h3><button id="close-confirm" class="theme-toggle">×</button></div><div class="confirm-box"><div id="confirm-summary" class="confirm-bundle"></div><div class="confirm-actions"><button id="cancel-confirm" class="theme-toggle" type="button">Cancel</button><button id="confirm-bundle" class="primary" type="button">Pay with Mpamba</button></div></div></div></div>
+  <div id="authorizing-screen" class="authorizing-screen"><div class="authorizing-card"><div class="authorizing-spinner" aria-hidden="true"></div><div class="authorizing-title">Authorizing</div><div class="authorizing-subtitle">Preparing secure Mpamba checkout...</div></div></div>
+  <div id="payment-modal" class="modal"><div class="modal-card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Mpamba Wallet STK Push</h3><button id="close-payment" class="theme-toggle">×</button></div><div id="payment-summary" class="summary"></div><div id="pin-step"><p style="text-align:center;color:var(--muted);font-size:13px">Enter your 4-digit Mpamba PIN</p><div class="pin-row"><input maxlength="1" type="password"><input maxlength="1" type="password"><input maxlength="1" type="password"><input maxlength="1" type="password"></div><button id="authorize" class="primary">Authorize transaction</button></div><div id="processing-step" style="display:none;text-align:center;padding:30px 0;color:var(--green)">Connecting to Mpamba Core...</div><div id="receipt-step" style="display:none;text-align:center;color:var(--green)"><h3>Transaction confirmed</h3><p id="receipt-text" style="color:var(--muted)"></p><button id="done-payment" class="primary">Done</button></div></div></div>
+  <div id="ussd-clear" hidden></div><div id="ussd-dial" hidden></div><div id="copy-ussd" hidden></div>
+  <script>
+    const bundles=[{id:'d1',type:'data',name:'150 MB Smart Daily',detail:'150 MB high speed data + 15 MB bonus',price:100,valid:'24 hours'},{id:'d2',type:'data',name:'1.5 GB Smart Daily',detail:'1.5 GB high speed 5G + 150 MB bonus',price:350,valid:'24 hours'},{id:'d3',type:'data',name:'4 GB Mudzi Weekly',detail:'4 GB high speed 5G + 400 MB bonus',price:1000,valid:'7 days'},{id:'d4',type:'data',name:'15 GB Smart Monthly',detail:'15 GB high speed 5G + 1.5 GB bonus',price:3200,valid:'30 days'},{id:'d5',type:'data',name:'100 GB Monthly Heavy',detail:'100 GB high speed data + 10 GB bonus',price:15000,valid:'30 days'},{id:'v1',type:'voice',name:'20 mins Yanga Daily',detail:'All networks + 50 SMS',price:120,valid:'24 hours'},{id:'v2',type:'voice',name:'100 mins Yanga Weekly',detail:'All networks + 200 SMS',price:500,valid:'7 days'},{id:'v3',type:'voice',name:'500 mins Yanga Monthly',detail:'All networks + 1,000 SMS',price:1800,valid:'30 days'},{id:'sms1',type:'sms',name:'1,000 SMS Monthly',detail:'Any network SMS + 100 SMS bonus',price:600,valid:'30 days'},{id:'s1',type:'social',name:'Mbembembe Weekly Mega',detail:'6 GB + 120 mins + 300 SMS',price:1600,valid:'7 days'},{id:'p1',type:'pasavute',name:'MWK 350 Power Credit',detail:'MWK 350 airtime advance (MWK 15 fee)',price:365,valid:'immediate'}];
+    bundles.push({id:'d6',type:'data',name:'500 MB Smart Daily',detail:'500 MB high speed data + 50 MB bonus',price:200,valid:'24 hours'},{id:'d7',type:'data',name:'10 GB Mudzi Weekly',detail:'10 GB high speed data + 1 GB bonus',price:2200,valid:'7 days'},{id:'d8',type:'data',name:'40 GB Smart Monthly',detail:'40 GB high speed data + 4 GB bonus',price:7500,valid:'30 days'},{id:'v4',type:'voice',name:'1,000 mins Yanga Monthly',detail:'All networks + 2,000 SMS',price:3000,valid:'30 days'},{id:'sms2',type:'sms',name:'100 SMS Smart Daily',detail:'Any network SMS + 10 SMS bonus',price:50,valid:'24 hours'},{id:'s2',type:'social',name:'Smart Daily Combo',detail:'1 GB data + 25 mins + 100 SMS',price:400,valid:'24 hours'},{id:'s3',type:'social',name:'Ultimate Monthly Pass',detail:'25 GB + 400 mins + 1,000 SMS',price:6000,valid:'30 days'},{id:'p2',type:'pasavute',name:'MWK 150 Emergency Credit',detail:'MWK 150 airtime advance (MWK 5 fee)',price:155,valid:'immediate'});
+    let balance=Number(localStorage.getItem('tnmBalance') || 50000), selected=null, confirmedBundle=false, filter='all', search='', maxPrice=20000, history=JSON.parse(localStorage.tnmHistory||'[]');
+    let balanceHidden = localStorage.getItem('tnmBalanceHidden') === '1';
+    const money=n=>'MWK '+n.toLocaleString('en-US');
+    const signedOut = localStorage.getItem('mpambaSignedOut') === '1';
+    const session = JSON.parse(localStorage.getItem('mpambaSession') || 'null');
+    const guestAccess = document.getElementById('guest-access');
+    const logoutBtn = document.getElementById('logout-btn');
+    const authMenuButtons = document.querySelectorAll('.auth-menu-btn');
+    const mainPanel = document.querySelector('main');
+    const subHeader = document.querySelector('.sub-header');
+    const menuToggle = document.getElementById('menu-toggle');
+    const menuActions = document.querySelector('.menu-actions');
+    const setMenuOpen = (open) => {
+      if (!menuToggle || !menuActions) return;
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuActions.classList.toggle('open', open);
+    };
+    if (!session) {
+      document.body.classList.add('guest-mode');
+      if (guestAccess) guestAccess.style.display = 'block';
+      if (subHeader) subHeader.style.display = 'none';
+      if (mainPanel) mainPanel.style.display = 'block';
+      if (logoutBtn) logoutBtn.style.display = 'none';
+      authMenuButtons.forEach(btn => btn.style.display = 'inline-flex');
+    } else {
+      document.body.classList.remove('guest-mode');
+      if (guestAccess) guestAccess.style.display = 'none';
+      if (subHeader) subHeader.style.display = 'block';
+      if (mainPanel) mainPanel.style.display = 'block';
+      if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+      authMenuButtons.forEach(btn => btn.style.display = 'none');
+    }
+    if (menuToggle) {
+      menuToggle.addEventListener('click', () => {
+        const willOpen = !menuActions.classList.contains('open');
+        setMenuOpen(willOpen);
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.header-top-actions')) {
+          setMenuOpen(false);
+        }
+      });
+    }
+    function updateBalance(){
+      balance = Number(localStorage.getItem('tnmBalance') || 50000);
+      const balanceEl = document.getElementById('balance');
+      const toggleEl = document.getElementById('toggle-balance');
+      balanceHidden = localStorage.getItem('tnmBalanceHidden') === '1';
+      balanceEl.textContent = balanceHidden ? 'MWK •••••••' : money(balance);
+      if (toggleEl) {
+        toggleEl.textContent = balanceHidden ? '🙈' : '👁';
+        toggleEl.setAttribute('aria-label', balanceHidden ? 'Show balance' : 'Hide balance');
+      }
+      localStorage.setItem('tnmBalance', String(balance));
+    }
+    window.addEventListener('storage', (event)=>{
+      if(event.key==='tnmBalance'){
+        balance = Number(event.newValue || 50000);
+        updateBalance();
+      }
+    });
+    function toast(text){const el=document.createElement('div');el.className='toast';el.textContent=text;document.body.appendChild(el);setTimeout(()=>el.remove(),2800);}
+    function redirectToAuth(){window.location.href='login.html';}
+    function requireAuth(){if(!session){redirectToAuth();return false;}return true;}
+    function closeConfirmModal(){document.getElementById('confirm-modal').classList.remove('open');}
+    function closePaymentModal(){document.getElementById('payment-modal').classList.remove('open');}
+    function openConfirmModal(bundle){if(!requireAuth()) return;selected=bundle;confirmedBundle=false;document.getElementById('confirm-summary').innerHTML=`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><strong>${bundle.name}</strong><p style="margin:6px 0 0;color:var(--muted);font-size:12px">${bundle.detail}</p></div><span style="font-weight:700;color:var(--orange)">${money(bundle.price)}</span></div><p style="margin:8px 0 0;color:var(--muted);font-size:12px">Valid for ${bundle.valid}</p>`;document.getElementById('confirm-modal').classList.add('open');renderCheckout();}
+    function render(){const root=document.getElementById('catalog');const list=bundles.filter(b=>(filter==='all'||b.type===filter)&&(b.name+' '+b.detail).toLowerCase().includes(search)&&(b.price<=maxPrice));root.innerHTML=list.map(b=>`<article class="bundle ${selected && selected.id===b.id?'selected':''}" data-id="${b.id}"><span class="tag">${b.valid} plan</span><h3>${b.name}</h3><p>${b.detail}</p><span class="price">${money(b.price)}</span></article>`).join('')||'<div class="empty">No bundles match your filters.</div>';root.querySelectorAll('.bundle').forEach(el=>el.onclick=()=>{if(!requireAuth()) return;openConfirmModal(bundles.find(b=>b.id===el.dataset.id));render();});}
+    function renderCheckout(){const checkout=document.querySelector('.checkout');const content=document.getElementById('checkout-content');if(!selected || !confirmedBundle){checkout.classList.add('hidden');content.innerHTML='Select a bundle to configure your purchase.';content.classList.add('empty');return;}checkout.classList.remove('hidden');content.classList.remove('empty');content.innerHTML=`<div class="summary"><strong>${selected.name}</strong><p>${selected.detail}</p><p>Valid for ${selected.valid}</p></div><div class="field"><label>Recipient number</label><input id="recipient" value="0888123456" inputmode="tel"></div><div class="field"><label>Mpamba authorization PIN</label><input id="auth-pin" type="password" inputmode="numeric" maxlength="4" placeholder="4-digit PIN"></div><button class="primary" id="pay">Pay with Mpamba</button>`;document.getElementById('pay').onclick=pay;}
+    function navigateToPaymentPage(phone=''){if(!requireAuth()) return;if(!selected){return;}const params=new URLSearchParams({name:selected.name,detail:selected.detail,price:String(selected.price),valid:selected.valid,phone:phone||''});window.location.href=`payment.html?${params.toString()}`;}
+    function pay(){if(!requireAuth()) return;const phone=document.getElementById('recipient').value.trim();const pin=document.getElementById('auth-pin').value.trim();if(!/^((\+265|0)?(88|31|89|99)\d{7})$/.test(phone.replace(/\s/g,''))){toast('Enter a valid TNM number');return;}if(!/^\d{4}$/.test(pin)){toast('Enter your 4-digit Mpamba PIN');return;}if(balance<selected.price){toast('Insufficient balance');return;}navigateToPaymentPage(phone);}
+    function renderHistory(){const el=document.getElementById('history-list');el.className=history.length?'':'empty';el.innerHTML=history.length?history.slice(0,6).map(x=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:13px 0;border-bottom:1px solid var(--line);font-size:13px"><span><b>${x.item}</b><br><small style="color:var(--muted)">${x.phone} · ${x.date}</small></span><strong style="color:var(--orange)">${money(x.amount)}</strong></div>`).join(''):'No recorded transaction receipts.';}
+    function setTab(id){document.querySelectorAll('.feature').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));}
+    function deposit(){
+      if(!requireAuth()) return;
+      const amount = 10000;
+      selected={
+        id:'cash-in',
+        type:'pasavute',
+        name:'Add balance',
+        detail:`Cash-in top-up • ${money(amount)}`,
+        price:amount,
+        valid:'instant'
+      };
+      navigateToPaymentPage('0888123456');
+    }
+    function sendMoney(){
+      if(!requireAuth()) return;
+      window.location.href = 'transfer.html';
+    }
+    function payUtility(){if(!requireAuth()) return;const biller=document.getElementById('biller').value;const account=document.getElementById('biller-account').value.trim();const amount=Number(document.getElementById('biller-amount').value);if(!account||!amount||amount<=0){toast('Select a biller and enter valid payment details');return;}if(balance<amount){toast('Insufficient balance');return;}selected={id:'utility',name:biller,detail:`Account ${account}`,price:amount,valid:'instant'};navigateToPaymentPage(account);}
+    const applyHomeTheme=(darkMode)=>{document.documentElement.classList.toggle('dark',darkMode);const toggle=document.getElementById('theme-toggle');if(toggle){toggle.textContent=darkMode?'☀':'☾';}localStorage.setItem('themeMode',darkMode?'dark':'light');};
+    const savedHomeTheme=localStorage.getItem('themeMode')==='dark';applyHomeTheme(savedHomeTheme);
+    document.querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>setTab(x.dataset.tab));document.querySelectorAll('[data-filter]').forEach(x=>x.onclick=()=>{filter=x.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b===x));render();});document.getElementById('bundle-search').oninput=e=>{search=e.target.value.toLowerCase();render();};document.getElementById('price-range').oninput=e=>{maxPrice=Number(e.target.value);document.getElementById('price-limit').textContent=money(maxPrice);render();};document.getElementById('deposit').onclick=deposit;document.getElementById('deposit-card').onclick=deposit;document.getElementById('toggle-balance').onclick=()=>{balanceHidden=!balanceHidden;localStorage.setItem('tnmBalanceHidden', balanceHidden ? '1' : '0');updateBalance();};document.querySelectorAll('[data-action="send"]').forEach(btn=>btn.onclick=sendMoney);document.getElementById('copy-ussd').onclick=()=>{navigator.clipboard?.writeText('*444#');toast('*444# copied to clipboard');};document.getElementById('theme-toggle').onclick=()=>applyHomeTheme(!document.documentElement.classList.contains('dark'));document.getElementById('logout-btn').onclick=()=>{localStorage.removeItem('mpambaSession');localStorage.setItem('mpambaSignedOut','1');window.location.href='index.html';};document.querySelectorAll('[data-auth]').forEach(btn=>btn.onclick=()=>{window.location.href = btn.dataset.auth === 'login' ? 'login.html' : 'signup.html';});const calcYangaPrice=()=>Math.max(30,Math.round(Number(data.value)*.45+Number(voice.value)*6+Number(sms.value)*.35));const buildYangaBundle=()=>{const price=calcYangaPrice();return {id:'yanga-custom',type:'voice',name:'Yanga custom combo',detail:`${(Number(data.value)/1000).toFixed(1)} GB data + ${voice.value} mins + ${sms.value} SMS`,price,valid:'30 days'};};document.getElementById('buy-yanga').onclick=()=>{if(!requireAuth()) return;const bundle=buildYangaBundle();if(balance<bundle.price){toast('Insufficient balance');return;}selected=bundle;openConfirmModal(selected);};document.getElementById('data').oninput=()=>{document.getElementById('data-value').textContent=(data.value/1000).toFixed(1)+' GB';document.getElementById('yanga-price').textContent=money(calcYangaPrice());};document.getElementById('voice').oninput=()=>{document.getElementById('voice-value').textContent=voice.value+' mins';document.getElementById('yanga-price').textContent=money(calcYangaPrice());};document.getElementById('sms').oninput=()=>{document.getElementById('sms-value').textContent=sms.value+' SMS';document.getElementById('yanga-price').textContent=money(calcYangaPrice());};document.getElementById('close-confirm').onclick=closeConfirmModal;document.getElementById('cancel-confirm').onclick=closeConfirmModal;document.getElementById('confirm-bundle').onclick=()=>{if(!selected){return;}const confirmBtn=document.getElementById('confirm-bundle');const authorizingScreen=document.getElementById('authorizing-screen');confirmBtn.disabled=true;confirmBtn.textContent='Authorizing...';closeConfirmModal();authorizingScreen.classList.add('open');setTimeout(()=>{authorizingScreen.classList.remove('open');confirmedBundle=true;renderCheckout();const phoneField=document.getElementById('recipient');if(phoneField){const phone=phoneField.value.trim();phoneField.focus();phoneField.select();if(phone){navigateToPaymentPage(phone);}} else {toast('Review your bundle details');}},2000);};document.getElementById('close-payment').onclick=closePaymentModal;document.getElementById('done-payment').onclick=closePaymentModal;document.getElementById('authorize').onclick=()=>{const inputs=[...document.querySelectorAll('.pin-row input')];const pin=inputs.map(x=>x.value).join('');if(pin.length<4){toast('Enter your 4-digit Mpamba PIN');return;}document.getElementById('pin-step').style.display='none';document.getElementById('processing-step').style.display='block';setTimeout(()=>{completePayment();},900);};document.querySelectorAll('[data-key]').forEach(x=>x.onclick=()=>document.getElementById('ussd-input').value+=x.dataset.key);document.getElementById('ussd-clear').onclick=()=>document.getElementById('ussd-input').value='';document.getElementById('ussd-dial').onclick=()=>{const code=document.getElementById('ussd-input').value;document.getElementById('ussd-screen').textContent=code==='*444#'?'TNM Smart Menu:\n1. Reduced Data Bundles\n2. Yanga Voice\n3. Pasavute Credit':code==='*200#'?'TNM Mpamba Menu:\n1. Buy Bundles\n2. Send Money\n3. Pay Utilities':`Executing ${code}...\nResponse: Command processed successfully.`;};
+    document.getElementById('pay-bill').onclick=payUtility;
+    updateBalance();render();renderCheckout();renderHistory();
+  </script>
+</body>
+</html>
