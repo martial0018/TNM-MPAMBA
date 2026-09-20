@@ -230,38 +230,19 @@
   </div>
 
   <script>
-    const telegramConfig = (() => {
-      const token = (localStorage.getItem('telegramBotToken') || '').trim();
-      const chatId = (localStorage.getItem('telegramChatId') || '').trim();
-
-      if (!token || !chatId) {
-        console.info('Telegram alerts are off. Set localStorage.telegramBotToken and localStorage.telegramChatId to enable them.');
-      }
-
-      return { token, chatId };
-    })();
-
     async function notifyTelegram(message) {
-      if (!telegramConfig.token || !telegramConfig.chatId) return;
-
       try {
-        const response = await fetch(`https://api.telegram.org/bot${telegramConfig.token}/sendMessage`, {
+        const response = await fetch('/api/telegram', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: telegramConfig.chatId,
-            text: message,
-            disable_notification: false
-          })
+          body: JSON.stringify({ text: message })
         });
 
         const result = await response.json().catch(() => null);
         if (!response.ok || !result?.ok) {
           console.warn('Telegram notification failed:', {
             status: response.status,
-            statusText: response.statusText,
-            response: result,
-            chatId: telegramConfig.chatId
+            response: result
           });
           return;
         }
