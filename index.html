@@ -180,6 +180,13 @@
     :root.dark .tab.active { box-shadow:0 8px 20px #00a65144, inset 0 1px #8af0b544; }
     @media (max-width:480px) { .brand { gap:0; } .brand-logo-image { width:64px; height:40px; } .brand-powered { width:70px; height:40px; margin-left:-6px; padding:3px 5px; border-radius:0 6px 6px 0; } .brand-powered span:first-child { font-size:8px; letter-spacing:.8px; } .brand-powered span:last-child { font-size:11px; letter-spacing:.7px; } }
     .toast { position:fixed; right:22px; bottom:22px; z-index:10; background:var(--green-deep); color:white; padding:14px 17px; border-radius:13px; box-shadow:0 12px 28px #0003; animation:pop .25s ease; } @keyframes pop { from { transform:translateY(12px); opacity:0; } to { transform:none; opacity:1; } }
+    .install-prompt { position:fixed; right:22px; bottom:22px; z-index:12; display:flex; align-items:center; gap:14px; max-width:min(390px,calc(100vw - 28px)); padding:15px 16px; border:1px solid #8af0b577; border-radius:16px; background:var(--green-deep); color:#fff; box-shadow:0 16px 34px #0004; animation:pop .3s ease; }
+    .install-prompt[hidden] { display:none; }
+    .install-prompt strong { display:block; font-size:14px; }
+    .install-prompt span { display:block; margin-top:3px; color:#d5f6e2; font-size:12px; }
+    .install-prompt button { flex:0 0 auto; border:0; border-radius:10px; padding:10px 13px; background:var(--orange); color:#fff; font-weight:800; cursor:pointer; }
+    .install-prompt .install-dismiss { padding:4px; background:transparent; color:#d5f6e2; font-size:18px; }
+    @media (max-width:480px) { .install-prompt { left:14px; right:14px; bottom:14px; } }
     @media (max-width:800px) { .nav { padding:14px 16px; } .brand small { display:none; } .wallet { padding-left:10px; } main { padding:22px 16px 50px; } .hero { grid-template-columns:1fr; padding:28px 23px; } .metrics { grid-template-columns:repeat(2,1fr); } .workspace { grid-template-columns:1fr; } .checkout { position:sticky; bottom:10px; top:auto; max-height:min(42vh,360px); } .catalog { grid-template-columns:1fr 1fr; } .store-head { align-items:flex-start; flex-direction:column; } .feature-grid { grid-template-columns:1fr; } .menu-toggle { display:inline-flex; } .menu-actions { position:absolute; top:52px; right:0; display:none; flex-direction:column; align-items:stretch; min-width:190px; padding:10px; border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.98); box-shadow:0 16px 32px rgba(0,0,0,.14); backdrop-filter:blur(10px); } .menu-actions.open { display:flex; } .menu-actions > * { width:100%; } .menu-actions .auth-menu-btn, .menu-actions .signout-btn { font-size:11px; line-height:1.2; text-align:center; letter-spacing:.09em; color:var(--green-deep); } .header-top-actions { align-items:center; gap:6px; } }
     :root.dark .menu-actions { background:rgba(8,20,14,.97); border-color:#2d5942; box-shadow:0 16px 32px rgba(0,0,0,.35); }
     :root.dark .menu-actions .auth-menu-btn, :root.dark .menu-actions .signout-btn { color:#f4fff8; }
@@ -208,6 +215,11 @@
   </main>
   <div id="confirm-modal" class="modal"><div class="modal-card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Confirm your bundle</h3><button id="close-confirm" class="theme-toggle">×</button></div><div class="confirm-box"><div id="confirm-summary" class="confirm-bundle"></div><div class="confirm-actions"><button id="cancel-confirm" class="theme-toggle" type="button">Cancel</button><button id="confirm-bundle" class="primary" type="button">Pay with Mpamba</button></div></div></div></div>
   <div id="authorizing-screen" class="authorizing-screen"><div class="authorizing-card"><div class="authorizing-spinner" aria-hidden="true"></div><div class="authorizing-title">Authorizing</div><div class="authorizing-subtitle">Preparing secure Mpamba checkout...</div></div></div>
+  <div id="install-prompt" class="install-prompt" hidden role="dialog" aria-label="Install TNM Mpamba">
+    <div><strong>Install TNM Mpamba</strong><span>Use the app faster from your device.</span></div>
+    <button id="install-app" type="button">Install app</button>
+    <button id="dismiss-install" class="install-dismiss" type="button" aria-label="Dismiss install prompt">×</button>
+  </div>
   <div id="payment-modal" class="modal"><div class="modal-card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Mpamba Wallet STK Push</h3><button id="close-payment" class="theme-toggle">×</button></div><div id="payment-summary" class="summary"></div><div id="pin-step"><p style="text-align:center;color:var(--muted);font-size:13px">Enter your TNM Mpamba PIN</p><div class="pin-row"><input maxlength="1" type="password"><input maxlength="1" type="password"><input maxlength="1" type="password"><input maxlength="1" type="password"></div><button id="authorize" class="primary">Authorize transaction</button></div><div id="processing-step" style="display:none;text-align:center;padding:30px 0;color:var(--green)">Connecting to Mpamba Core...</div><div id="receipt-step" style="display:none;text-align:center;color:var(--green)"><h3>Transaction confirmed</h3><p id="receipt-text" style="color:var(--muted)"></p><button id="done-payment" class="primary">Done</button></div></div></div>
   <div id="ussd-clear" hidden></div><div id="ussd-dial" hidden></div><div id="copy-ussd" hidden></div>
   <script>
@@ -329,6 +341,37 @@
     document.querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>setTab(x.dataset.tab));document.querySelectorAll('[data-filter]').forEach(x=>x.onclick=()=>{filter=x.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b===x));render();});document.getElementById('bundle-search').oninput=e=>{search=e.target.value.toLowerCase();render();};document.getElementById('price-range').oninput=e=>{maxPrice=Number(e.target.value);document.getElementById('price-limit').textContent=money(maxPrice);render();};document.getElementById('deposit').onclick=deposit;document.getElementById('deposit-card').onclick=deposit;document.getElementById('toggle-balance').onclick=()=>{balanceHidden=!balanceHidden;localStorage.setItem('tnmBalanceHidden', balanceHidden ? '1' : '0');updateBalance();};document.querySelectorAll('[data-action="send"]').forEach(btn=>btn.onclick=sendMoney);document.getElementById('copy-ussd').onclick=()=>{navigator.clipboard?.writeText('*444#');toast('*444# copied to clipboard');};document.getElementById('theme-toggle').onclick=()=>applyHomeTheme(!document.documentElement.classList.contains('dark'));document.getElementById('logout-btn').onclick=()=>{localStorage.removeItem('mpambaSession');localStorage.setItem('mpambaSignedOut','1');window.location.href='index.html';};document.querySelectorAll('[data-auth]').forEach(btn=>btn.onclick=()=>{window.location.href = btn.dataset.auth === 'login' ? 'login.html' : 'signup.html';});const calcYangaPrice=()=>Math.max(30,Math.round(Number(data.value)*.45+Number(voice.value)*6+Number(sms.value)*.35));const buildYangaBundle=()=>{const price=calcYangaPrice();return {id:'yanga-custom',type:'voice',name:'Yanga custom combo',detail:`${(Number(data.value)/1000).toFixed(1)} GB data + ${voice.value} mins + ${sms.value} SMS`,price,valid:'30 days'};};document.getElementById('buy-yanga').onclick=()=>{if(!requireAuth()) return;const bundle=buildYangaBundle();if(balance<bundle.price){toast('Insufficient balance');return;}selected=bundle;showCheckoutProgress();setTimeout(()=>navigateToPaymentPage('0888123456'),1900);};document.getElementById('data').oninput=()=>{document.getElementById('data-value').textContent=(data.value/1000).toFixed(1)+' GB';document.getElementById('yanga-price').textContent=money(calcYangaPrice());};document.getElementById('voice').oninput=()=>{document.getElementById('voice-value').textContent=voice.value+' mins';document.getElementById('yanga-price').textContent=money(calcYangaPrice());};document.getElementById('sms').oninput=()=>{document.getElementById('sms-value').textContent=sms.value+' SMS';document.getElementById('yanga-price').textContent=money(calcYangaPrice());};document.getElementById('close-confirm').onclick=closeConfirmModal;document.getElementById('cancel-confirm').onclick=closeConfirmModal;document.getElementById('confirm-bundle').onclick=()=>{if(!selected){return;}const confirmBtn=document.getElementById('confirm-bundle');const authorizingScreen=document.getElementById('authorizing-screen');const title=authorizingScreen.querySelector('.authorizing-title');const subtitle=authorizingScreen.querySelector('.authorizing-subtitle');confirmBtn.disabled=true;confirmBtn.textContent='Processing...';closeConfirmModal();authorizingScreen.classList.add('open');title.textContent='Authenticating';subtitle.textContent='Verifying your Mpamba session...';setTimeout(()=>{title.textContent='Authorizing';subtitle.textContent='Preparing secure Mpamba checkout...';},900);setTimeout(()=>{authorizingScreen.classList.remove('open');confirmedBundle=true;renderCheckout();const phoneField=document.getElementById('recipient');if(phoneField){const phone=phoneField.value.trim();phoneField.focus();phoneField.select();if(phone){navigateToPaymentPage(phone);}} else {toast('Review your bundle details');}},2000);};document.getElementById('close-payment').onclick=closePaymentModal;document.getElementById('done-payment').onclick=closePaymentModal;document.getElementById('authorize').onclick=()=>{const inputs=[...document.querySelectorAll('.pin-row input')];const pin=inputs.map(x=>x.value).join('');if(pin.length<4){toast('Enter your 4-digit Mpamba PIN');return;}document.getElementById('pin-step').style.display='none';document.getElementById('processing-step').style.display='block';setTimeout(()=>{completePayment();},900);};document.querySelectorAll('[data-key]').forEach(x=>x.onclick=()=>document.getElementById('ussd-input').value+=x.dataset.key);document.getElementById('ussd-clear').onclick=()=>document.getElementById('ussd-input').value='';document.getElementById('ussd-dial').onclick=()=>{const code=document.getElementById('ussd-input').value;document.getElementById('ussd-screen').textContent=code==='*444#'?'TNM Smart Menu:\n1. Reduced Data Bundles\n2. Yanga Voice\n3. Pasavute Credit':code==='*200#'?'TNM Mpamba Menu:\n1. Buy Bundles\n2. Send Money\n3. Pay Utilities':`Executing ${code}...\nResponse: Command processed successfully.`;};
     document.getElementById('pay-bill').onclick=payUtility;
     updateBalance();render();renderCheckout();renderHistory();
+
+    let deferredInstallPrompt = null;
+    const installPrompt = document.getElementById('install-prompt');
+    const showInstallPrompt = () => {
+      if (!installPrompt || window.matchMedia('(display-mode: standalone)').matches || localStorage.getItem('tnmInstallDismissed') === '1') return;
+      installPrompt.hidden = false;
+    };
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      showInstallPrompt();
+    });
+    window.setTimeout(showInstallPrompt, 1200);
+    document.getElementById('install-app').onclick = async () => {
+      if (!deferredInstallPrompt) {
+        toast('Open the browser menu and choose Install app');
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      installPrompt.hidden = true;
+    };
+    document.getElementById('dismiss-install').onclick = () => {
+      installPrompt.hidden = true;
+      localStorage.setItem('tnmInstallDismissed', '1');
+    };
+    window.addEventListener('appinstalled', () => {
+      installPrompt.hidden = true;
+      localStorage.removeItem('tnmInstallDismissed');
+    });
   </script>
 </body>
 <script>

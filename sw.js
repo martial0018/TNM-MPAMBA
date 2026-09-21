@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tnm-mpamba-v2';
+const CACHE_NAME = 'tnm-mpamba-v3';
 const ASSETS = [
   '/',
   '/index.html',
