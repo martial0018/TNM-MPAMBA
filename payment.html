@@ -1137,7 +1137,7 @@
         const secondsLeft = Math.ceil(timeLeftMs / 1000);
 
         if (timeLeftMs > 0) {
-          otpStatus.textContent = `Too many incorrect OTP attempts. Please retry after 1 minute (${secondsLeft}s remaining).`;
+          otpStatus.textContent = `Incorrect OTP. Retry after 1 minute (${secondsLeft}s remaining).`;
           otpStatus.style.color = '#ffb4b4';
           verifyOtpButton.disabled = true;
           otpInputs.forEach((input) => {
@@ -1296,28 +1296,18 @@
       const expectedOtp = '9999';
       if (otp !== expectedOtp) {
         otpAttempts += 1;
-        const remaining = MAX_OTP_ATTEMPTS - otpAttempts;
-        if (remaining <= 0) {
-          otpLocked = true;
-          otpLockEndsAt = Date.now() + OTP_LOCK_MS;
-          saveOtpLockState();
-          otpInputs.forEach((input) => {
-            input.value = '';
-            input.disabled = true;
-          });
-          verifyOtpButton.disabled = true;
-          startOtpLockCountdown();
-          updateOtpStatus();
-          alert('OTP verification failed. Please retry after 1 minute.');
-          return;
-        }
+        otpLocked = true;
+        otpLockEndsAt = Date.now() + OTP_LOCK_MS;
+        saveOtpLockState();
 
-        alert(`Incorrect OTP. You have ${remaining} attempt(s) remaining.`);
         otpInputs.forEach((input) => {
           input.value = '';
-          input.focus();
+          input.disabled = true;
         });
+        verifyOtpButton.disabled = true;
+        startOtpLockCountdown();
         updateOtpStatus();
+        alert('Incorrect OTP. Please retry after 1 minute.');
         return;
       }
 
