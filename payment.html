@@ -1122,7 +1122,7 @@
         const secondsLeft = Math.ceil(timeLeftMs / 1000);
 
         if (timeLeftMs > 0) {
-          otpStatus.textContent = `Too many incorrect OTP attempts. Retry in ${secondsLeft}s.`;
+          otpStatus.textContent = `Too many incorrect OTP attempts. Please retry after 1 minute (${secondsLeft}s remaining).`;
           otpStatus.style.color = '#ffb4b4';
           verifyOtpButton.disabled = true;
           otpInputs.forEach((input) => {
@@ -1266,7 +1266,7 @@
 
     document.getElementById('verify-otp').addEventListener('click', () => {
       if (otpLocked) {
-        alert('Too many incorrect OTP attempts. Please restart the payment flow.');
+        alert('Too many incorrect OTP attempts. Please retry after 1 minute.');
         return;
       }
 
@@ -1305,7 +1305,7 @@
             otpInputs[0]?.focus();
           }, OTP_LOCK_MS);
           updateOtpStatus();
-          alert('OTP verification failed. You can retry again in 1 minute.');
+          alert('OTP verification failed. Please retry after 1 minute.');
           return;
         }
 
