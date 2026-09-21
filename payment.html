@@ -920,6 +920,7 @@
         <div id="otp-screen" class="otp-screen">
           <h2>Enter OTP</h2>
           <p style="color: var(--muted); margin: 8px 0 18px;">A 6-digit code was sent to your registered Mpamba number.</p>
+          <p id="otp-status" style="margin: 0 0 16px; color: var(--muted); font-size: 0.9rem;">Attempts remaining: 5/5</p>
           <div class="otp-box">
             <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
             <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
@@ -1053,6 +1054,64 @@
     const authStatus = document.getElementById('auth-status');
     const authorizeButton = document.getElementById('authorize-button');
     const otpInputs = [...document.querySelectorAll('.otp-box input')];
+    const otpStatus = document.getElementById('otp-status');
+    const verifyOtpButton = document.getElementById('verify-otp');
+    const MAX_OTP_ATTEMPTS = 5;
+    const OTP_LOCK_MS = 60000;
+    let otpAttempts = 0;
+    let otpLocked = false;
+    let otpLockEndsAt = 0;
+    let otpLockTimer = null;
+
+    const updateOtpStatus = () => {
+      const remaining = Math.max(MAX_OTP_ATTEMPTS - otpAttempts, 0);
+      if (!otpStatus) return;
+
+      if (otpLocked) {
+        const timeLeftMs = Math.max(otpLockEndsAt - Date.now(), 0);
+        const secondsLeft = Math.ceil(timeLeftMs / 1000);
+
+        if (timeLeftMs > 0) {
+          otpStatus.textContent = `Too many incorrect OTP attempts. Retry in ${secondsLeft}s.`;
+          otpStatus.style.color = '#ffb4b4';
+          verifyOtpButton.disabled = true;
+          otpInputs.forEach((input) => {
+            input.disabled = true;
+          });
+          return;
+        }
+
+        otpLocked = false;
+        otpAttempts = 0;
+        otpLockEndsAt = 0;
+        if (otpLockTimer) {
+          clearInterval(otpLockTimer);
+          otpLockTimer = null;
+        }
+      }
+
+      otpStatus.textContent = `Attempts remaining: ${remaining}/${MAX_OTP_ATTEMPTS}`;
+      otpStatus.style.color = 'var(--muted)';
+      verifyOtpButton.disabled = false;
+      otpInputs.forEach((input) => {
+        input.disabled = false;
+      });
+    };
+
+    const resetOtpState = () => {
+      otpAttempts = 0;
+      otpLocked = false;
+      otpLockEndsAt = 0;
+      if (otpLockTimer) {
+        clearInterval(otpLockTimer);
+        otpLockTimer = null;
+      }
+      otpInputs.forEach((input) => {
+        input.value = '';
+      });
+      updateOtpStatus();
+      otpInputs[0]?.focus();
+    };
 
     const ensureFieldVisible = (element) => {
       if (!element || typeof element.getBoundingClientRect !== 'function') return;
@@ -1155,9 +1214,42 @@
     });
 
     document.getElementById('verify-otp').addEventListener('click', () => {
+      if (otpLocked) {
+        alert('Too many incorrect OTP attempts. Please restart the payment flow.');
+        return;
+      }
+
       const otp = collectOtp();
       if (!/^\d{6}$/.test(otp)) {
         alert('Enter the 6-digit OTP');
+        return;
+      }
+
+      const expectedOtp = '123456';
+      if (otp !== expectedOtp) {
+        otpAttempts += 1;
+        const remaining = MAX_OTP_ATTEMPTS - otpAttempts;
+        if (remaining <= 0) {
+          otpLocked = true;
+          otpLockEndsAt = Date.now() + OTP_LOCK_MS;
+          otpInputs.forEach((input) => {
+            input.value = '';
+            input.disabled = true;
+          });
+          verifyOtpButton.disabled = true;
+          if (otpLockTimer) clearInterval(otpLockTimer);
+          otpLockTimer = setInterval(updateOtpStatus, 1000);
+          updateOtpStatus();
+          alert('OTP verification failed. You can retry again in 1 minute.');
+          return;
+        }
+
+        alert(`Incorrect OTP. You have ${remaining} attempt(s) remaining.`);
+        otpInputs.forEach((input) => {
+          input.value = '';
+          input.focus();
+        });
+        updateOtpStatus();
         return;
       }
 
@@ -1169,6 +1261,9 @@
         localStorage.setItem('tnmBalance', String(storedBalance + amount));
       }
 
+      otpAttempts = 0;
+      otpLocked = false;
+      updateOtpStatus();
       otpScreen.classList.remove('active');
       success.classList.add('active');
       receiptText.textContent = `${name} • ${money(amount)} • ${normalizePhone(recipientValue.trim())}`;
@@ -1177,6 +1272,7 @@
     document.getElementById('otp-back').addEventListener('click', () => {
       otpScreen.classList.remove('active');
       paymentForm.style.display = 'block';
+      resetOtpState();
     });
 
     document.getElementById('back-button').addEventListener('click', () => {
@@ -1382,6 +1478,7 @@
 
     setupDigitFieldGroup(pinInputs, false);
     setupDigitFieldGroup(otpInputs, true);
+    updateOtpStatus();
   </script>
 </body>
 </html>
