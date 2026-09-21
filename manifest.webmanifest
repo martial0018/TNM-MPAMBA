@@ -1,0 +1,19 @@
+{
+  "name": "TNM & Mpamba Digital Portal",
+  "short_name": "TNM Mpamba",
+  "description": "TNM 5G bundles, Mpamba wallet and secure payments",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4faf7",
+  "theme_color": "#00a651",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/images/mpamba_logo_transparent.png",
+      "sizes": "114x101",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
