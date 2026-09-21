@@ -955,7 +955,7 @@
     const money = n => 'MWK ' + Number(n).toLocaleString('en-US');
     const normalizePhone = (value = '') => {
       const clean = value.toString().replace(/\D/g, '');
-      if (!clean) return '888123456';
+      if (!clean) return '';
       if (clean.startsWith('265')) return clean.slice(3);
       if (clean.startsWith('0')) return clean.slice(1);
       return clean;
@@ -990,7 +990,7 @@
     const rawDetail = params.get('detail') || 'Bundle details';
     const price = Number(params.get('price') || 0);
     const valid = params.get('valid') || '24 hours';
-    const phone = normalizePhone(params.get('phone') || transferRecipient || '0888123456');
+    const phone = normalizePhone(params.get('phone') || transferRecipient || '');
     const isTopUp = rawName === 'Add balance' || params.get('type') === 'topup';
     const recipientInput = document.getElementById('recipient-number');
     const maskPhoneHint = (value = '') => {
@@ -1014,7 +1014,7 @@
     document.getElementById('service-item').textContent = transferMode === 'transfer' ? `${transferNetwork || 'Mpamba'} transfer` : name;
     document.getElementById('validity').textContent = transferMode === 'transfer' ? 'Instant' : valid;
     document.getElementById('reference').textContent = reference;
-    recipientInput.dataset.actualValue = phone;
+    recipientInput.dataset.actualValue = '';
     recipientInput.placeholder = '8xxxxxxxx';
     recipientInput.value = '';
     recipientInput.addEventListener('focus', () => {
