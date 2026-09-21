@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tnm-mpamba-v5';
+const CACHE_NAME = 'tnm-mpamba-v6';
 const ASSETS = [
   '/',
   '/index.html',
@@ -9,7 +9,9 @@ const ASSETS = [
   '/transfer-pin.html',
   '/manifest.webmanifest',
   '/assets/images/mpamba_logo_transparent.png',
-  '/assets/images/pwa-icon.svg'
+  '/assets/images/pwa-icon.svg',
+  '/assets/images/tnm-mpamba-icon-192.png',
+  '/assets/images/tnm-mpamba-icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
