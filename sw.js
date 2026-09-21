@@ -8,7 +8,8 @@ const ASSETS = [
   '/transfer.html',
   '/transfer-pin.html',
   '/manifest.webmanifest',
-  '/assets/images/mpamba_logo_transparent.png'
+  '/assets/images/mpamba_logo_transparent.png',
+  '/assets/images/pwa-icon.svg'
 ];
 
 self.addEventListener('install', (event) => {

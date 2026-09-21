@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TNM Mpamba">
+  <rect width="512" height="512" rx="96" fill="#073d25"/>
+  <rect x="36" y="36" width="440" height="440" rx="76" fill="#00a651"/>
+  <circle cx="386" cy="128" r="34" fill="#ff6600"/>
+  <text x="72" y="310" fill="#ffffff" font-family="Arial, sans-serif" font-size="168" font-weight="700" letter-spacing="-18">tnm</text>
+  <text x="77" y="382" fill="#d5f6e2" font-family="Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="8">MPAMBA</text>
+</svg>
