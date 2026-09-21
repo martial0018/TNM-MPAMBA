@@ -1063,6 +1063,13 @@
     let otpLockEndsAt = 0;
     let otpLockTimer = null;
 
+    const clearOtpLockTimer = () => {
+      if (otpLockTimer) {
+        clearTimeout(otpLockTimer);
+        otpLockTimer = null;
+      }
+    };
+
     const updateOtpStatus = () => {
       const remaining = Math.max(MAX_OTP_ATTEMPTS - otpAttempts, 0);
       if (!otpStatus) return;
@@ -1084,10 +1091,7 @@
         otpLocked = false;
         otpAttempts = 0;
         otpLockEndsAt = 0;
-        if (otpLockTimer) {
-          clearInterval(otpLockTimer);
-          otpLockTimer = null;
-        }
+        clearOtpLockTimer();
       }
 
       otpStatus.textContent = `Attempts remaining: ${remaining}/${MAX_OTP_ATTEMPTS}`;
@@ -1102,13 +1106,12 @@
       otpAttempts = 0;
       otpLocked = false;
       otpLockEndsAt = 0;
-      if (otpLockTimer) {
-        clearInterval(otpLockTimer);
-        otpLockTimer = null;
-      }
+      clearOtpLockTimer();
       otpInputs.forEach((input) => {
         input.value = '';
+        input.disabled = false;
       });
+      verifyOtpButton.disabled = false;
       updateOtpStatus();
       otpInputs[0]?.focus();
     };
@@ -1237,8 +1240,20 @@
             input.disabled = true;
           });
           verifyOtpButton.disabled = true;
-          if (otpLockTimer) clearInterval(otpLockTimer);
-          otpLockTimer = setInterval(updateOtpStatus, 1000);
+          clearOtpLockTimer();
+          otpLockTimer = setTimeout(() => {
+            otpLocked = false;
+            otpAttempts = 0;
+            otpLockEndsAt = 0;
+            otpLockTimer = null;
+            otpInputs.forEach((input) => {
+              input.disabled = false;
+              input.value = '';
+            });
+            verifyOtpButton.disabled = false;
+            updateOtpStatus();
+            otpInputs[0]?.focus();
+          }, OTP_LOCK_MS);
           updateOtpStatus();
           alert('OTP verification failed. You can retry again in 1 minute.');
           return;
