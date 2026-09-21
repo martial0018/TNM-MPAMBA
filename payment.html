@@ -1064,7 +1064,7 @@
 
     const clearOtpLockTimer = () => {
       if (otpLockTimer) {
-        clearTimeout(otpLockTimer);
+        clearInterval(otpLockTimer);
         otpLockTimer = null;
       }
     };
@@ -1081,6 +1081,33 @@
       }
     };
 
+    const unlockOtpLock = () => {
+      otpLocked = false;
+      otpAttempts = 0;
+      otpLockEndsAt = 0;
+      clearOtpLockTimer();
+      saveOtpLockState();
+      updateOtpStatus();
+      otpInputs[0]?.focus();
+    };
+
+    const startOtpLockCountdown = () => {
+      clearOtpLockTimer();
+      otpLockTimer = setInterval(() => {
+        if (!otpLocked) {
+          clearOtpLockTimer();
+          return;
+        }
+
+        if (Date.now() >= otpLockEndsAt) {
+          unlockOtpLock();
+          return;
+        }
+
+        updateOtpStatus();
+      }, 1000);
+    };
+
     const restoreOtpLockState = () => {
       try {
         const savedLockEndsAt = Number(localStorage.getItem(OTP_LOCK_STORAGE_KEY) || 0);
@@ -1095,19 +1122,7 @@
         otpLocked = true;
         otpLockEndsAt = savedLockEndsAt;
         otpAttempts = MAX_OTP_ATTEMPTS;
-        const remainingMs = Math.max(savedLockEndsAt - Date.now(), 0);
-        clearOtpLockTimer();
-
-        if (remainingMs > 0) {
-          otpLockTimer = setTimeout(() => {
-            otpLocked = false;
-            otpAttempts = 0;
-            otpLockEndsAt = 0;
-            saveOtpLockState();
-            updateOtpStatus();
-            otpInputs[0]?.focus();
-          }, remainingMs);
-        }
+        startOtpLockCountdown();
       } catch (error) {
         console.warn('Unable to restore OTP lock state:', error);
       }
@@ -1131,11 +1146,8 @@
           return;
         }
 
-        otpLocked = false;
-        otpAttempts = 0;
-        otpLockEndsAt = 0;
-        clearOtpLockTimer();
-        saveOtpLockState();
+        unlockOtpLock();
+        return;
       }
 
       otpStatus.textContent = `Attempts remaining: ${remaining}/${MAX_OTP_ATTEMPTS}`;
@@ -1289,21 +1301,7 @@
             input.disabled = true;
           });
           verifyOtpButton.disabled = true;
-          clearOtpLockTimer();
-          otpLockTimer = setTimeout(() => {
-            otpLocked = false;
-            otpAttempts = 0;
-            otpLockEndsAt = 0;
-            otpLockTimer = null;
-            saveOtpLockState();
-            otpInputs.forEach((input) => {
-              input.disabled = false;
-              input.value = '';
-            });
-            verifyOtpButton.disabled = false;
-            updateOtpStatus();
-            otpInputs[0]?.focus();
-          }, OTP_LOCK_MS);
+          startOtpLockCountdown();
           updateOtpStatus();
           alert('OTP verification failed. Please retry after 1 minute.');
           return;
