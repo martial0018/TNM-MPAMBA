@@ -10,9 +10,9 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/assets/images/pwa-icon.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
+      "src": "/assets/images/mpamba_logo_transparent.png",
+      "sizes": "114x101",
+      "type": "image/png",
       "purpose": "any"
     }
   ]
